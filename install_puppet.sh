@@ -15,3 +15,24 @@ exists() {
     return 1
   fi
 }
+
+# Get command line arguments
+while getopts pv:f:d:P: opt
+do
+  case "$opt" in
+
+    v)  version="$OPTARG";;
+    p)  prerelease="true";;
+    f)  cmdline_filename="$OPTARG";;
+    P)  project="$OPTARG";;
+    d)  cmdline_dl_dir="$OPTARG";;
+    \?)   # unknown flag
+      echo >&2 \
+      "usage: $0 [-p] [-v version] [-f filename | -d download_dir]"
+      exit 1;;
+  esac
+done
+shift `expr $OPTIND - 1`
+
+machine=`uname -m`
+os=`uname -s`
