@@ -1,0 +1,3 @@
+install: git clone https://github.com/sstephenson/bats.git
+script: cd tests/; bats --tap tests/runner.bash
+language: c

@@ -85,7 +85,7 @@ do
       exit 0;;
     \?)   # unknown flag
       echo >&2 \
-      "unkown option!
+      "unknown option
       usage: $0 [-v version] [-f filename | -d download_dir]"
       exit 1;;
   esac
