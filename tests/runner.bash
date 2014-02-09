@@ -6,6 +6,12 @@ if [ ! -x "../install_puppet.sh" ]; then
     exit 1
 fi
 
+if [ -z "$HAS_JOSH_K_SEAL_OF_APPROVAL" ]; then
+    echo "These bats tests currently only work in Travis..."
+    echo "Feel free to fix them so they do! ;)"
+    exit 1
+fi  
+
 pi="../install_puppet.sh"
 
 @test "sanity" {
@@ -24,5 +30,5 @@ pi="../install_puppet.sh"
     run "$pi" -x
     [ "$status" -eq 1 ]
     echo "${lines[0]}"
-    [ "${lines[0]}" = "../install_puppet.sh: illegal option -- x" ]
+    [ "${lines[0]}" = "Illegal option -x" ]
 }
