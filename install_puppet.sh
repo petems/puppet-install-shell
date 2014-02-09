@@ -16,9 +16,6 @@ exists() {
   fi
 }
 
-echo "Defaulting to 3.4.2 for version"
-$version = '3.4.2'
-
 # Helper bug-reporting text
 report_bug() {
   echo "Please file a bug report at https://github.com/petems/puppet-install-shell/"
@@ -26,6 +23,9 @@ report_bug() {
   echo " "
   echo "Please detail your operating system type, version and any other relevant details"
 }
+
+echo "Defaulting to latest version if no options given"
+version='3.4.2'
 
 # Get command line arguments
 while getopts pv:f:d:P: opt
@@ -350,6 +350,7 @@ install_file() {
     "deb")
       echo "installing with dpkg..."
       dpkg -i "$2"
+      apt-get install -y "puppet=$version-1puppetlabs1"
       ;;
     "solaris")
       echo "installing with pkgadd..."
@@ -391,14 +392,22 @@ case $platform in
   "el")
     echo "Red hat like platform! Lets get you an RPM..."
     filetype="rpm"
-    filename="puppetlabs-release-6-7.noarch.rpm"
-    download_url="http://yum.puppetlabs.com/el/6/products/i386/puppetlabs-release-6-7.noarch.rpm"
-    download_filename="puppetlabs-release-6-7.noarch.rpm"
+    filename="puppetlabs-release-${platform_version}-7.noarch.rpm"
+    download_url="http://yum.puppetlabs.com/el/${platform_version}/products/i386/puppetlabs-release-${platform_version}-7.noarch.rpm"
+    download_filename="puppetlabs-release-${platform_version}-7.noarch.rpm"
     ;;
-  "deb")
+  "debian")
     echo "Debian like platform! Lets get you a DEB..."
+    case $major_version in
+      "5") deb_codename="lenny";;
+      "6") deb_codename="squeeze";;
+      "7") deb_codename="wheezy";;
+    esac
     filetype="deb"
-    filename="puppetlabs-release-${DISTRIB_CODENAME}.deb"
+    filename="puppetlabs-release-${deb_codename}.deb"
+    download_url="http://apt.puppetlabs.com/puppetlabs-release-${deb_codename}.deb"
+    download_filename="puppetlabs-release-${deb_codename}.deb"
+    ;;
   *)
     echo "Sorry $platform is not supported yet!"
     report_bug
@@ -417,3 +426,7 @@ fi
 do_download "$download_url"  "$download_filename"
 
 install_file $filetype "$download_filename"
+
+if test "x$tmp_dir" != "x"; then
+  rm -r "$tmp_dir"
+fi
