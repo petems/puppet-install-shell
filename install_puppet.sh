@@ -6,6 +6,43 @@
 # 0.0.1a - Here Be Dragons
 #
 
+# Set up colours
+if tty -s;then
+    RED=${RED:-$(tput setaf 1)}
+    GREEN=${GREEN:-$(tput setaf 2)}
+    YLW=${YLW:-$(tput setaf 3)}
+    BLUE=${BLUE:-$(tput setaf 4)}
+    RESET=${RESET:-$(tput sgr0)}
+else
+    RED=
+    GREEN=
+    YLW=
+    BLUE=
+    RESET=
+fi
+
+# Timestamp
+now () {
+    date +'%H:%M:%S %z'
+}
+
+# Logging functions instead of echo
+log () {
+    echo "${BLUE}`now`${RESET} ${1}"
+}
+
+info () {
+    log "${GREEN}INFO${RESET}: ${1}"
+}
+
+warn () {
+    log "${YLW}WARN${RESET}: ${1}"
+}
+
+critical () {
+    log "${RED}CRIT${RESET}: ${1}"
+}
+
 # Check whether a command exists - returns 0 if it does, 1 if it does not
 exists() {
   if command -v $1 >/dev/null 2>&1
@@ -18,13 +55,13 @@ exists() {
 
 # Helper bug-reporting text
 report_bug() {
-  echo "Please file a bug report at https://github.com/petems/puppet-install-shell/"
-  echo "Version: $version"
-  echo " "
-  echo "Please detail your operating system type, version and any other relevant details"
+  critical "Please file a bug report at https://github.com/petems/puppet-install-shell/"
+  critical "Version: $version"
+  critical ""
+  critical "Please detail your operating system type, version and any other relevant details"
 }
 
-echo "Defaulting to latest version if no options given"
+info "Defaulting to latest version if no options given"
 version='3.4.2'
 
 # Get command line arguments
@@ -117,7 +154,7 @@ elif test "x$os" = "xAIX"; then
 fi
 
 if test "x$platform" = "x"; then
-  echo "Unable to determine platform version!"
+  critical "Unable to determine platform version!"
   report_bug
   exit 1
 fi
@@ -148,7 +185,7 @@ case $platform in
 esac
 
 if test "x$platform_version" = "x"; then
-  echo "Unable to determine platform version!"
+  critical "Unable to determine platform version!"
   report_bug
   exit 1
 fi
@@ -160,13 +197,13 @@ if test "x$platform" = "xsolaris2"; then
 fi
 
 checksum_mismatch() {
-  echo "Package checksum mismatch!"
+  critical "Package checksum mismatch!"
   report_bug
   exit 1
 }
 
 unable_to_retrieve_package() {
-  echo "Unable to retrieve a valid package!"
+  critical "Unable to retrieve a valid package!"
   report_bug
   exit 1
 }
@@ -182,13 +219,13 @@ capture_tmp_stderr() {
 
 # do_wget URL FILENAME
 do_wget() {
-  echo "trying wget..."
+  info "Trying wget..."
   wget -O "$2" "$1" 2>/tmp/stderr
   rc=$?
   # check for 404
   grep "ERROR 404" /tmp/stderr 2>&1 >/dev/null
   if test $? -eq 0; then
-    echo "ERROR 404"
+    critical "ERROR 404"
     unable_to_retrieve_package
   fi
 
@@ -203,13 +240,13 @@ do_wget() {
 
 # do_curl URL FILENAME
 do_curl() {
-  echo "trying curl..."
+  info "Trying curl..."
   curl -sL -D /tmp/stderr "$1" > "$2"
   rc=$?
   # check for 404
   grep "404 Not Found" /tmp/stderr 2>&1 >/dev/null
   if test $? -eq 0; then
-    echo "ERROR 404"
+    critical "ERROR 404"
     unable_to_retrieve_package
   fi
 
@@ -224,7 +261,7 @@ do_curl() {
 
 # do_fetch URL FILENAME
 do_fetch() {
-  echo "trying fetch..."
+  info "Trying fetch..."
   fetch -o "$2" "$1" 2>/tmp/stderr
   # check for bad return status
   test $? -ne 0 && return 1
@@ -233,13 +270,13 @@ do_fetch() {
 
 # do_curl URL FILENAME
 do_perl() {
-  echo "trying perl..."
+  info "Trying perl..."
   perl -e 'use LWP::Simple; getprint($ARGV[0]);' "$1" > "$2" 2>/tmp/stderr
   rc=$?
   # check for 404
   grep "404 Not Found" /tmp/stderr 2>&1 >/dev/null
   if test $? -eq 0; then
-    echo "ERROR 404"
+    critical "ERROR 404"
     unable_to_retrieve_package
   fi
 
@@ -254,13 +291,13 @@ do_perl() {
 
 # do_curl URL FILENAME
 do_python() {
-  echo "trying python..."
+  info "Trying python..."
   python -c "import sys,urllib2 ; sys.stdout.write(urllib2.urlopen(sys.argv[1]).read())" "$1" > "$2" 2>/tmp/stderr
   rc=$?
   # check for 404
   grep "HTTP Error 404" /tmp/stderr 2>&1 >/dev/null
   if test $? -eq 0; then
-    echo "ERROR 404"
+    critical "ERROR 404"
     unable_to_retrieve_package
   fi
 
@@ -278,38 +315,38 @@ do_checksum() {
     if test "x$checksum" != "x$2"; then
       checksum_mismatch
     else
-      echo "Checksum compare with sha256sum succeeded."
+      info "Checksum compare with sha256sum succeeded."
     fi
   elif exists shasum; then
     checksum=`shasum -a 256 $1 | awk '{ print $1 }'`
     if test "x$checksum" != "x$2"; then
       checksum_mismatch
     else
-      echo "Checksum compare with shasum succeeded."
+      info "Checksum compare with shasum succeeded."
     fi
   elif exists md5sum; then
     checksum=`md5sum $1 | awk '{ print $1 }'`
     if test "x$checksum" != "x$3"; then
       checksum_mismatch
     else
-      echo "Checksum compare with md5sum succeeded."
+      info "Checksum compare with md5sum succeeded."
     fi
   elif exists md5; then
     checksum=`md5 $1 | awk '{ print $4 }'`
     if test "x$checksum" != "x$3"; then
       checksum_mismatch
     else
-      echo "Checksum compare with md5 succeeded."
+      info "Checksum compare with md5 succeeded."
     fi
   else
-    echo "WARNING: could not find a valid checksum program, pre-install shasum, md5sum or md5 in your O/S image to get valdation..."
+    warn "Could not find a valid checksum program, pre-install shasum, md5sum or md5 in your O/S image to get valdation..."
   fi
 }
 
 # do_download URL FILENAME
 do_download() {
-  echo "downloading $1"
-  echo "  to file $2"
+  info "Downloading $1"
+  info "  to file $2"
 
   # we try all of these until we get success.
   # perl, in particular may be present but LWP::Simple may not be installed
@@ -340,20 +377,20 @@ do_download() {
 # install_file TYPE FILENAME
 # TYPE is "rpm", "deb", "solaris", or "sh"
 install_file() {
-  echo "Installing Puppet $version"
+  info "Installing Puppet $version"
   case "$1" in
     "rpm")
-      echo "installing with rpm..."
+      info "installing with rpm..."
       rpm -Uvh --oldpackage --replacepkgs "$2"
       yum install -y "puppet-$version"
       ;;
     "deb")
-      echo "installing with dpkg..."
+      info "installing with dpkg..."
       dpkg -i "$2"
       apt-get install -y "puppet=$version-1puppetlabs1"
       ;;
     "solaris")
-      echo "installing with pkgadd..."
+      info "installing with pkgadd..."
       echo "conflict=nocheck" > /tmp/nocheck
       echo "action=nocheck" >> /tmp/nocheck
       echo "mail=" >> /tmp/nocheck
@@ -361,23 +398,23 @@ install_file() {
       pkgadd -n -d "$2" -a /tmp/nocheck puppet
       ;;
     "sh" )
-      echo "installing with sh..."
+      info "installing with sh..."
       sh "$2"
       ;;
     *)
-      echo "Unknown filetype: $1"
+      critical "Unknown filetype: $1"
       report_bug
       exit 1
       ;;
   esac
   if test $? -ne 0; then
-    echo "Installation failed"
+    critical "Installation failed"
     report_bug
     exit 1
   fi
 }
 
-echo "Downloading Puppet $version for ${platform}..."
+info "Downloading Puppet $version for ${platform}..."
 
 if test "x$TMPDIR" = "x"; then
   tmp="/tmp"
@@ -390,14 +427,14 @@ tmp_dir="$tmp/install.sh.$$"
 
 case $platform in
   "el")
-    echo "Red hat like platform! Lets get you an RPM..."
+    info "Red hat like platform! Lets get you an RPM..."
     filetype="rpm"
     filename="puppetlabs-release-${platform_version}-7.noarch.rpm"
     download_url="http://yum.puppetlabs.com/el/${platform_version}/products/i386/puppetlabs-release-${platform_version}-7.noarch.rpm"
     download_filename="puppetlabs-release-${platform_version}-7.noarch.rpm"
     ;;
   "debian")
-    echo "Debian like platform! Lets get you a DEB..."
+    info "Debian like platform! Lets get you a DEB..."
     case $major_version in
       "5") deb_codename="lenny";;
       "6") deb_codename="squeeze";;
@@ -409,7 +446,7 @@ case $platform in
     download_filename="puppetlabs-release-${deb_codename}.deb"
     ;;
   *)
-    echo "Sorry $platform is not supported yet!"
+    critical "Sorry $platform is not supported yet!"
     report_bug
     exit 1
     ;;
