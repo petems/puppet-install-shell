@@ -414,6 +414,7 @@ install_file() {
     "deb")
       info "installing with dpkg..."
       dpkg -i "$2"
+      apt-get update -y
       apt-get install -y "puppet=$version-1puppetlabs1"
       ;;
     "solaris")
@@ -463,6 +464,18 @@ case $platform in
     filename="puppetlabs-release-${deb_codename}.deb"
     download_url="http://apt.puppetlabs.com/puppetlabs-release-${deb_codename}.deb"
     download_filename="puppetlabs-release-${deb_codename}.deb"
+    ;;
+  "ubuntu")
+    info "Ubuntu platform! Lets get you a DEB..."
+    case $platform_version in
+      "12.04") ubuntu_codename="precise";;
+      "12.10") ubuntu_codename="quantal";;
+      "13.04") ubuntu_codename="raring";;
+    esac
+    filetype="deb"
+    filename="puppetlabs-release-${ubuntu_codename}.deb"
+    download_url="http://apt.puppetlabs.com/puppetlabs-release-${ubuntu_codename}.deb"
+    download_filename="puppetlabs-release-${ubuntu_codename}.deb"
     ;;
   *)
     critical "Sorry $platform is not supported yet!"
