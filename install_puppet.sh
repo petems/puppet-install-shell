@@ -16,6 +16,9 @@ exists() {
   fi
 }
 
+echo "Defaulting to 3.4.2 for version"
+$version = '3.4.2'
+
 # Helper bug-reporting text
 report_bug() {
   echo "Please file a bug report at https://github.com/petems/puppet-install-shell/"
@@ -158,6 +161,12 @@ fi
 
 checksum_mismatch() {
   echo "Package checksum mismatch!"
+  report_bug
+  exit 1
+}
+
+unable_to_retrieve_package() {
+  echo "Unable to retrieve a valid package!"
   report_bug
   exit 1
 }
@@ -336,6 +345,7 @@ install_file() {
     "rpm")
       echo "installing with rpm..."
       rpm -Uvh --oldpackage --replacepkgs "$2"
+      yum install -y "puppet-$version"
       ;;
     "deb")
       echo "installing with dpkg..."
@@ -379,10 +389,16 @@ tmp_dir="$tmp/install.sh.$$"
 
 case $platform in
   "el")
-    $filetype="rpm"
-    $download_url="http://yum.puppetlabs.com/el/6/products/i386/puppetlabs-release-6-7.noarch.rpm"
-    $download_filename="puppetlabs-release-6-7.noarch.rpm"
+    echo "Red hat like platform! Lets get you an RPM..."
+    filetype="rpm"
+    filename="puppetlabs-release-6-7.noarch.rpm"
+    download_url="http://yum.puppetlabs.com/el/6/products/i386/puppetlabs-release-6-7.noarch.rpm"
+    download_filename="puppetlabs-release-6-7.noarch.rpm"
     ;;
+  "deb")
+    echo "Debian like platform! Lets get you a DEB..."
+    filetype="deb"
+    filename="puppetlabs-release-${DISTRIB_CODENAME}.deb"
   *)
     echo "Sorry $platform is not supported yet!"
     report_bug
