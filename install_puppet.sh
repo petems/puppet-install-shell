@@ -66,22 +66,27 @@ report_bug() {
   critical "Please detail your operating system type, version and any other relevant details"
 }
 
-info "Defaulting to latest version if no options given"
-version='3.4.2'
+latest_version="3.4.2"
+version="$latest_version"
 
 # Get command line arguments
-while getopts pv:f:d:P: opt
+while getopts v:f:d:h opt
 do
   case "$opt" in
-
     v)  version="$OPTARG";;
-    p)  prerelease="true";;
     f)  cmdline_filename="$OPTARG";;
-    P)  project="$OPTARG";;
     d)  cmdline_dl_dir="$OPTARG";;
+    h) echo >&2 \
+      "install_puppet.sh - A shell script to install Puppet, asumming no dependancies
+      usage: 
+      -v   version         version to install, defaults to $latest_version
+      -f   filename        filename for downloaded file, defaults to original name
+      -d   download_dir    filename for downloaded file, defaults to /tmp/(random-number)"
+      exit 0;;
     \?)   # unknown flag
       echo >&2 \
-      "usage: $0 [-p] [-v version] [-f filename | -d download_dir]"
+      "unkown option!
+      usage: $0 [-v version] [-f filename | -d download_dir]"
       exit 1;;
   esac
 done
