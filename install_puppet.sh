@@ -162,19 +162,6 @@ checksum_mismatch() {
   exit 1
 }
 
-unable_to_retrieve_package() {
-  echo "Unable to retrieve a valid package!"
-  report_bug
-  echo "Metadata URL: $metadata_url"
-  if test "x$download_url" != "x"; then
-    echo "Download URL: $download_url"
-  fi
-  if test "x$stderr_results" != "x"; then
-    echo "\nDEBUG OUTPUT FOLLOWS:\n$stderr_results"
-  fi
-  exit 1
-}
-
 capture_tmp_stderr() {
   # spool up /tmp/stderr from all the commands we called
   if test -f "/tmp/stderr"; then
@@ -392,9 +379,9 @@ tmp_dir="$tmp/install.sh.$$"
 
 case $platform in
   "el")
-    filetype = "rpm"
-    download_url = "http://yum.puppetlabs.com/el/6/products/i386/puppetlabs-release-6-7.noarch.rpm"
-    download_filename = "puppetlabs-release-6-7.noarch.rpm"
+    $filetype = "rpm"
+    $download_url = "http://yum.puppetlabs.com/el/6/products/i386/puppetlabs-release-6-7.noarch.rpm"
+    $download_filename = "puppetlabs-release-6-7.noarch.rpm"
     ;;
   *)
     echo "Sorry $platform is not supported yet!"
