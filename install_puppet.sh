@@ -208,14 +208,31 @@ unable_to_retrieve_package() {
   exit 1
 }
 
+if test "x$TMPDIR" = "x"; then
+  tmp="/tmp"
+else
+  tmp=$TMPDIR
+fi
+
+# Random function since not all shells have $RANDOM
+random () {
+    hexdump -n 2 -e '/2 "%u"' /dev/urandom
+}
+
+tmp_dir="$tmp/install.sh.$$.`random`"
+(umask 077 && mkdir $tmp_dir) || exit 1
+
+tmp_stderr="$tmp/stderr.$$.`random`"
+
 capture_tmp_stderr() {
-  # spool up /tmp/stderr from all the commands we called
-  if test -f "/tmp/stderr"; then
-    output=`cat /tmp/stderr`
+  # spool up tmp_stderr from all the commands we called
+  if test -f $tmp_stderr; then
+    output=`cat ${tmp_stderr}`
     stderr_results="${stderr_results}\nSTDERR from $1:\n\n$output\n"
-    rm /tmp/stderr
   fi
 }
+
+trap "rm -f $tmp_stderr; rm -rf $tmp_dir; exit $1" 1 2 15
 
 # do_wget URL FILENAME
 do_wget() {
@@ -223,7 +240,7 @@ do_wget() {
   wget -O "$2" "$1" 2>/tmp/stderr
   rc=$?
   # check for 404
-  grep "ERROR 404" /tmp/stderr 2>&1 >/dev/null
+  grep "ERROR 404" $tmp_stderr 2>&1 >/dev/null
   if test $? -eq 0; then
     critical "ERROR 404"
     unable_to_retrieve_package
@@ -244,7 +261,7 @@ do_curl() {
   curl -sL -D /tmp/stderr "$1" > "$2"
   rc=$?
   # check for 404
-  grep "404 Not Found" /tmp/stderr 2>&1 >/dev/null
+  grep "404 Not Found" $tmp_stderr 2>&1 >/dev/null
   if test $? -eq 0; then
     critical "ERROR 404"
     unable_to_retrieve_package
@@ -274,7 +291,7 @@ do_perl() {
   perl -e 'use LWP::Simple; getprint($ARGV[0]);' "$1" > "$2" 2>/tmp/stderr
   rc=$?
   # check for 404
-  grep "404 Not Found" /tmp/stderr 2>&1 >/dev/null
+  grep "404 Not Found" $tmp_stderr 2>&1 >/dev/null
   if test $? -eq 0; then
     critical "ERROR 404"
     unable_to_retrieve_package
@@ -295,7 +312,7 @@ do_python() {
   python -c "import sys,urllib2 ; sys.stdout.write(urllib2.urlopen(sys.argv[1]).read())" "$1" > "$2" 2>/tmp/stderr
   rc=$?
   # check for 404
-  grep "HTTP Error 404" /tmp/stderr 2>&1 >/dev/null
+  grep "HTTP Error 404" $tmp_stderr 2>&1 >/dev/null
   if test $? -eq 0; then
     critical "ERROR 404"
     unable_to_retrieve_package
@@ -416,14 +433,6 @@ install_file() {
 
 info "Downloading Puppet $version for ${platform}..."
 
-if test "x$TMPDIR" = "x"; then
-  tmp="/tmp"
-else
-  tmp=$TMPDIR
-fi
-# secure-ish temp dir creation without having mktemp available (DDoS-able but not expliotable)
-tmp_dir="$tmp/install.sh.$$"
-(umask 077 && mkdir $tmp_dir) || exit 1
 
 case $platform in
   "el")
