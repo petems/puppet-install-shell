@@ -23,6 +23,6 @@ pi="../install_puppet.sh"
 @test "illegal option" {
     run "$pi" -x
     [ "$status" -eq 1 ]
-    echo "{lines[0]}"
+    echo "${lines[0]}"
     [ "${lines[0]}" = "../install_puppet.sh: illegal option -- x" ]
 }
