@@ -389,3 +389,28 @@ fi
 # secure-ish temp dir creation without having mktemp available (DDoS-able but not expliotable)
 tmp_dir="$tmp/install.sh.$$"
 (umask 077 && mkdir $tmp_dir) || exit 1
+
+case $platform in
+  "el")
+    filetype = "rpm"
+    download_url = "http://yum.puppetlabs.com/el/6/products/i386/puppetlabs-release-6-7.noarch.rpm"
+    download_filename = "puppetlabs-release-6-7.noarch.rpm"
+    ;;
+  *)
+    echo "Sorry $platform is not supported yet!"
+    report_bug
+    exit 1
+    ;;
+esac
+
+if test "x$cmdline_filename" != "x"; then
+  download_filename="$cmdline_filename"
+elif test "x$cmdline_dl_dir" != "x"; then
+  download_filename="$cmdline_dl_dir/$filename"
+else
+  download_filename="$tmp_dir/$filename"
+fi
+
+do_download "$download_url"  "$download_filename"
+
+install_file $filetype "$download_filename"
