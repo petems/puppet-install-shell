@@ -56,7 +56,12 @@ exists() {
 # Helper bug-reporting text
 report_bug() {
   critical "Please file a bug report at https://github.com/petems/puppet-install-shell/"
+  critical ""
   critical "Version: $version"
+  critical "Platform: $platform"
+  critical "Platform Version: $platform_version"
+  critical "Machine: $machine"
+  critical "OS: $os"
   critical ""
   critical "Please detail your operating system type, version and any other relevant details"
 }
