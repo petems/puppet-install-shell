@@ -450,8 +450,7 @@ case $platform in
     info "Red hat like platform! Lets get you an RPM..."
     filetype="rpm"
     filename="puppetlabs-release-${platform_version}-7.noarch.rpm"
-    download_url="http://yum.puppetlabs.com/el/${platform_version}/products/i386/puppetlabs-release-${platform_version}-7.noarch.rpm"
-    download_filename="puppetlabs-release-${platform_version}-7.noarch.rpm"
+    download_url="http://yum.puppetlabs.com/el/${platform_version}/products/i386/${filename}"
     ;;
   "debian")
     info "Debian like platform! Lets get you a DEB..."
@@ -462,8 +461,7 @@ case $platform in
     esac
     filetype="deb"
     filename="puppetlabs-release-${deb_codename}.deb"
-    download_url="http://apt.puppetlabs.com/puppetlabs-release-${deb_codename}.deb"
-    download_filename="puppetlabs-release-${deb_codename}.deb"
+    download_url="http://apt.puppetlabs.com/${filename}"
     ;;
   "ubuntu")
     info "Ubuntu platform! Lets get you a DEB..."
@@ -474,8 +472,13 @@ case $platform in
     esac
     filetype="deb"
     filename="puppetlabs-release-${ubuntu_codename}.deb"
-    download_url="http://apt.puppetlabs.com/puppetlabs-release-${ubuntu_codename}.deb"
-    download_filename="puppetlabs-release-${ubuntu_codename}.deb"
+    download_url="http://apt.puppetlabs.com/${filename}"
+    ;;
+  "mac_os_x")
+    info "Mac OS X platform! You need some DMGs..."
+    filetype="dmg"
+    filename="puppet-XXX.dmg"
+    download_url="http://downloads.puppetlabs.com/mac/${filename}"
     ;;
   *)
     critical "Sorry $platform is not supported yet!"
@@ -485,11 +488,15 @@ case $platform in
 esac
 
 if test "x$cmdline_filename" != "x"; then
-  download_filename="$cmdline_filename"
-elif test "x$cmdline_dl_dir" != "x"; then
-  download_filename="$cmdline_dl_dir/$filename"
+  download_filename=$cmdline_filename
 else
-  download_filename="$tmp_dir/$filename"
+  download_filename=$filename
+fi
+
+if test "x$cmdline_dl_dir" != "x"; then
+  download_filename="$cmdline_dl_dir/$download_filename"
+else
+  download_filename="$tmp_dir/$download_filename"
 fi
 
 do_download "$download_url"  "$download_filename"
