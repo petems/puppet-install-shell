@@ -247,8 +247,9 @@ trap "rm -f $tmp_stderr; rm -rf $tmp_dir; exit $1" 1 2 15
 # do_wget URL FILENAME
 do_wget() {
   info "Trying wget..."
-  wget -O "$2" "$1" 2>/tmp/stderr
+  wget -O "$2" "$1" 2>$tmp_stderr
   rc=$?
+
   # check for 404
   grep "ERROR 404" $tmp_stderr 2>&1 >/dev/null
   if test $? -eq 0; then
@@ -268,7 +269,7 @@ do_wget() {
 # do_curl URL FILENAME
 do_curl() {
   info "Trying curl..."
-  curl -sL -D /tmp/stderr "$1" > "$2"
+  curl -sL -D $tmp_stderr "$1" > "$2"
   rc=$?
   # check for 404
   grep "404 Not Found" $tmp_stderr 2>&1 >/dev/null
@@ -289,7 +290,7 @@ do_curl() {
 # do_fetch URL FILENAME
 do_fetch() {
   info "Trying fetch..."
-  fetch -o "$2" "$1" 2>/tmp/stderr
+  fetch -o "$2" "$1" 2>$tmp_stderr
   # check for bad return status
   test $? -ne 0 && return 1
   return 0
@@ -298,7 +299,7 @@ do_fetch() {
 # do_perl URL FILENAME
 do_perl() {
   info "Trying perl..."
-  perl -e 'use LWP::Simple; getprint($ARGV[0]);' "$1" > "$2" 2>/tmp/stderr
+  perl -e 'use LWP::Simple; getprint($ARGV[0]);' "$1" > "$2" 2>$tmp_stderr
   rc=$?
   # check for 404
   grep "404 Not Found" $tmp_stderr 2>&1 >/dev/null
@@ -319,7 +320,7 @@ do_perl() {
 # do_python URL FILENAME
 do_python() {
   info "Trying python..."
-  python -c "import sys,urllib2 ; sys.stdout.write(urllib2.urlopen(sys.argv[1]).read())" "$1" > "$2" 2>/tmp/stderr
+  python -c "import sys,urllib2 ; sys.stdout.write(urllib2.urlopen(sys.argv[1]).read())" "$1" > "$2" 2>$tmp_stderr
   rc=$?
   # check for 404
   grep "HTTP Error 404" $tmp_stderr 2>&1 >/dev/null
