@@ -247,8 +247,9 @@ trap "rm -f $tmp_stderr; rm -rf $tmp_dir; exit $1" 1 2 15
 # do_wget URL FILENAME
 do_wget() {
   info "Trying wget..."
-  wget -O "$2" "$1" 2>/tmp/stderr
+  wget -O "$2" "$1" 2>$tmp_stderr
   rc=$?
+
   # check for 404
   grep "ERROR 404" $tmp_stderr 2>&1 >/dev/null
   if test $? -eq 0; then
@@ -268,7 +269,7 @@ do_wget() {
 # do_curl URL FILENAME
 do_curl() {
   info "Trying curl..."
-  curl -sL -D /tmp/stderr "$1" > "$2"
+  curl -sL -D $tmp_stderr "$1" > "$2"
   rc=$?
   # check for 404
   grep "404 Not Found" $tmp_stderr 2>&1 >/dev/null
@@ -289,7 +290,7 @@ do_curl() {
 # do_fetch URL FILENAME
 do_fetch() {
   info "Trying fetch..."
-  fetch -o "$2" "$1" 2>/tmp/stderr
+  fetch -o "$2" "$1" 2>$tmp_stderr
   # check for bad return status
   test $? -ne 0 && return 1
   return 0
@@ -298,7 +299,7 @@ do_fetch() {
 # do_perl URL FILENAME
 do_perl() {
   info "Trying perl..."
-  perl -e 'use LWP::Simple; getprint($ARGV[0]);' "$1" > "$2" 2>/tmp/stderr
+  perl -e 'use LWP::Simple; getprint($ARGV[0]);' "$1" > "$2" 2>$tmp_stderr
   rc=$?
   # check for 404
   grep "404 Not Found" $tmp_stderr 2>&1 >/dev/null
@@ -319,7 +320,7 @@ do_perl() {
 # do_python URL FILENAME
 do_python() {
   info "Trying python..."
-  python -c "import sys,urllib2 ; sys.stdout.write(urllib2.urlopen(sys.argv[1]).read())" "$1" > "$2" 2>/tmp/stderr
+  python -c "import sys,urllib2 ; sys.stdout.write(urllib2.urlopen(sys.argv[1]).read())" "$1" > "$2" 2>$tmp_stderr
   rc=$?
   # check for 404
   grep "HTTP Error 404" $tmp_stderr 2>&1 >/dev/null
@@ -429,6 +430,20 @@ install_file() {
       info "installing with sh..."
       sh "$2"
       ;;
+    "dmg" )
+      info "installing with installer..."
+      hdiutil attach $2 
+      installer -verboseR -target / -package /Volumes/puppet-${version}/puppet-${version}.pkg
+      # code via stackoverflow, woot -- installer might not be done at exit
+      # http://stackoverflow.com/questions/18752257/delay-from-osx-installer
+      flag=1
+      while [ $flag -ne 0 ]
+          do
+              sleep 1
+              hdiutil unmount /Volumes/puppet-${version}
+              flag=$?
+          done
+      ;;
     *)
       critical "Unknown filetype: $1"
       report_bug
@@ -450,8 +465,7 @@ case $platform in
     info "Red hat like platform! Lets get you an RPM..."
     filetype="rpm"
     filename="puppetlabs-release-${platform_version}-7.noarch.rpm"
-    download_url="http://yum.puppetlabs.com/el/${platform_version}/products/i386/puppetlabs-release-${platform_version}-7.noarch.rpm"
-    download_filename="puppetlabs-release-${platform_version}-7.noarch.rpm"
+    download_url="http://yum.puppetlabs.com/el/${platform_version}/products/i386/${filename}"
     ;;
   "debian")
     info "Debian like platform! Lets get you a DEB..."
@@ -462,8 +476,7 @@ case $platform in
     esac
     filetype="deb"
     filename="puppetlabs-release-${deb_codename}.deb"
-    download_url="http://apt.puppetlabs.com/puppetlabs-release-${deb_codename}.deb"
-    download_filename="puppetlabs-release-${deb_codename}.deb"
+    download_url="http://apt.puppetlabs.com/${filename}"
     ;;
   "ubuntu")
     info "Ubuntu platform! Lets get you a DEB..."
@@ -474,8 +487,13 @@ case $platform in
     esac
     filetype="deb"
     filename="puppetlabs-release-${ubuntu_codename}.deb"
-    download_url="http://apt.puppetlabs.com/puppetlabs-release-${ubuntu_codename}.deb"
-    download_filename="puppetlabs-release-${ubuntu_codename}.deb"
+    download_url="http://apt.puppetlabs.com/${filename}"
+    ;;
+  "mac_os_x")
+    info "Mac OS X platform! You need some DMGs..."
+    filetype="dmg"
+    filename="puppet-${version}.dmg"
+    download_url="http://downloads.puppetlabs.com/mac/${filename}"
     ;;
   *)
     critical "Sorry $platform is not supported yet!"
@@ -485,11 +503,15 @@ case $platform in
 esac
 
 if test "x$cmdline_filename" != "x"; then
-  download_filename="$cmdline_filename"
-elif test "x$cmdline_dl_dir" != "x"; then
-  download_filename="$cmdline_dl_dir/$filename"
+  download_filename=$cmdline_filename
 else
-  download_filename="$tmp_dir/$filename"
+  download_filename=$filename
+fi
+
+if test "x$cmdline_dl_dir" != "x"; then
+  download_filename="$cmdline_dl_dir/$download_filename"
+else
+  download_filename="$tmp_dir/$download_filename"
 fi
 
 do_download "$download_url"  "$download_filename"
