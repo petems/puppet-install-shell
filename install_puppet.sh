@@ -430,6 +430,20 @@ install_file() {
       info "installing with sh..."
       sh "$2"
       ;;
+    "dmg" )
+      info "installing with installer..."
+      hdiutil attach $2 
+      installer -verboseR -target / -package /Volumes/puppet-${version}/puppet-${version}.pkg
+      # code via stackoverflow, woot -- installer might not be done at exit
+      # http://stackoverflow.com/questions/18752257/delay-from-osx-installer
+      flag=1
+      while [ $flag -ne 0 ]
+          do
+              sleep 1
+              hdiutil unmount /Volumes/puppet-${version}
+              flag=$?
+          done
+      ;;
     *)
       critical "Unknown filetype: $1"
       report_bug
@@ -478,7 +492,7 @@ case $platform in
   "mac_os_x")
     info "Mac OS X platform! You need some DMGs..."
     filetype="dmg"
-    filename="puppet-XXX.dmg"
+    filename="puppet-${version}.dmg"
     download_url="http://downloads.puppetlabs.com/mac/${filename}"
     ;;
   *)
