@@ -432,8 +432,9 @@ install_file() {
       ;;
     "dmg" )
       info "installing with installer..."
-      hdiutil attach $2 
-      installer -verboseR -target / -package /Volumes/puppet-${version}/puppet-${version}.pkg
+      hdiutil attach $2
+      info "Installer may require sudo access, the script might ask for your root password"
+      sudo installer -verboseR -target / -package /Volumes/puppet-${version}/puppet-${version}.pkg
       # code via stackoverflow, woot -- installer might not be done at exit
       # http://stackoverflow.com/questions/18752257/delay-from-osx-installer
       flag=1
