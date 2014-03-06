@@ -479,7 +479,7 @@ case $platform in
     download_url="http://yum.puppetlabs.com/el/${platform_version}/products/${arch}/${filename}"
     ;;
   "debian")
-    info "Debian like platform! Lets get you a DEB..."
+    info "Debian platform! Lets get you a DEB..."
     case $major_version in
       "5") deb_codename="lenny";;
       "6") deb_codename="squeeze";;
