@@ -75,7 +75,7 @@ do
     d)  cmdline_dl_dir="$OPTARG";;
     h) echo >&2 \
       "install_puppet.sh - A shell script to install Puppet, asumming no dependancies
-      usage: 
+      usage:
       -v   version         version to install, defaults to $latest_version
       -f   filename        filename for downloaded file, defaults to original name
       -d   download_dir    filename for downloaded file, defaults to /tmp/(random-number)"
