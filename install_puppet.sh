@@ -416,7 +416,7 @@ install_file() {
       info "installing with dpkg..."
       dpkg -i "$2"
       apt-get update -y
-      apt-get install -y "puppet=$version-1puppetlabs1"
+      apt-get install -y "puppet-common=$version-1puppetlabs1" "puppet=$version-1puppetlabs1"
       ;;
     "solaris")
       info "installing with pkgadd..."
