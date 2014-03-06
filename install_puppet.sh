@@ -66,9 +66,6 @@ report_bug() {
   critical "Please detail your operating system type, version and any other relevant details"
 }
 
-latest_version="3.4.2"
-version="$latest_version"
-
 # Get command line arguments
 while getopts v:f:d:h opt
 do
