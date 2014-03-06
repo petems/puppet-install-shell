@@ -12,6 +12,11 @@ Usage
 $ ./puppet.sh [-p] [-v version] [-f filename | -d download_dir]
 ```
 
-Defaults to 3.4.2 as a version if none is given.
+Defaults to latest available as a version if none is given.
 
 Currently working on: Debian, CentOS.
+
+A quick way to install after carefully looking at the source:
+```
+$ curl https://raw.github.com/petems/puppet-install-shell/master/install_puppet.sh | sudo sh
+```
