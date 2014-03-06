@@ -66,9 +66,6 @@ report_bug() {
   critical "Please detail your operating system type, version and any other relevant details"
 }
 
-latest_version="3.4.2"
-version="$latest_version"
-
 # Get command line arguments
 while getopts v:f:d:h opt
 do
@@ -78,7 +75,7 @@ do
     d)  cmdline_dl_dir="$OPTARG";;
     h) echo >&2 \
       "install_puppet.sh - A shell script to install Puppet, asumming no dependancies
-      usage: 
+      usage:
       -v   version         version to install, defaults to $latest_version
       -f   filename        filename for downloaded file, defaults to original name
       -d   download_dir    filename for downloaded file, defaults to /tmp/(random-number)"
@@ -405,18 +402,31 @@ do_download() {
 # install_file TYPE FILENAME
 # TYPE is "rpm", "deb", "solaris", or "sh"
 install_file() {
-  info "Installing Puppet $version"
+  if test "$version" = ''; then
+    version="latest";
+    info "Version parameter not defined, assuming latest";
+  else
+    info "Version parameter defined: $version";
+  fi
   case "$1" in
     "rpm")
       info "installing with rpm..."
       rpm -Uvh --oldpackage --replacepkgs "$2"
-      yum install -y "puppet-$version"
+      if test "$version" = 'latest'; then
+        yum install -y puppet
+      else
+        yum install -y "puppet-$version"
+      fi
       ;;
     "deb")
       info "installing with dpkg..."
       dpkg -i "$2"
       apt-get update -y
-      apt-get install -y "puppet-common=$version-1puppetlabs1" "puppet=$version-1puppetlabs1"
+      if test "$version" = 'latest'; then
+        apt-get install -y puppet-common puppet
+      else
+        apt-get install -y puppet-common=$version-1puppetlabs1 puppet=$version-1puppetlabs1 --force-yes
+      fi
       ;;
     "solaris")
       info "installing with pkgadd..."
@@ -469,7 +479,7 @@ case $platform in
     download_url="http://yum.puppetlabs.com/el/${platform_version}/products/${arch}/${filename}"
     ;;
   "debian")
-    info "Debian like platform! Lets get you a DEB..."
+    info "Debian platform! Lets get you a DEB..."
     case $major_version in
       "5") deb_codename="lenny";;
       "6") deb_codename="squeeze";;
@@ -493,6 +503,13 @@ case $platform in
   "mac_os_x")
     info "Mac OS X platform! You need some DMGs..."
     filetype="dmg"
+    if test "$version" = ''; then
+      version="3.4.3";
+      info "No version given, will assumed you want the latest as of 19-Feb-2014 $version";
+      info "If a new version has been released, open an issue https://github.com/petems/puppet-install-shell/";
+    else
+      info "Downloading $version dmg file";
+    fi
     filename="puppet-${version}.dmg"
     download_url="http://downloads.puppetlabs.com/mac/${filename}"
     ;;
