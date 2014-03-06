@@ -402,18 +402,31 @@ do_download() {
 # install_file TYPE FILENAME
 # TYPE is "rpm", "deb", "solaris", or "sh"
 install_file() {
-  info "Installing Puppet $version"
+  if test "$version" = ''; then
+    version="latest";
+    info "Version parameter not defined, assuming latest";
+  else
+    info "Version parameter defined: $version";
+  fi
   case "$1" in
     "rpm")
       info "installing with rpm..."
       rpm -Uvh --oldpackage --replacepkgs "$2"
-      yum install -y "puppet-$version"
+      if test "$version" = 'latest'; then
+        yum install -y puppet
+      else
+        yum install -y "puppet-$version"
+      fi
       ;;
     "deb")
       info "installing with dpkg..."
       dpkg -i "$2"
       apt-get update -y
-      apt-get install -y "puppet-common=$version-1puppetlabs1" "puppet=$version-1puppetlabs1"
+      if test "$version" = 'latest'; then
+        apt-get install -y puppet-common puppet
+      else
+        apt-get install -y puppet-common=$version-1puppetlabs1 puppet=$version-1puppetlabs1 --force-yes
+      fi
       ;;
     "solaris")
       info "installing with pkgadd..."
@@ -490,6 +503,13 @@ case $platform in
   "mac_os_x")
     info "Mac OS X platform! You need some DMGs..."
     filetype="dmg"
+    if test "$version" = ''; then
+      version="3.4.3";
+      info "No version given, will assumed you want the latest as of 19-Feb-2014 $version";
+      info "If a new version has been released, open an issue https://github.com/petems/puppet-install-shell/";
+    else
+      info "Downloading $version dmg file";
+    fi
     filename="puppet-${version}.dmg"
     download_url="http://downloads.puppetlabs.com/mac/${filename}"
     ;;
