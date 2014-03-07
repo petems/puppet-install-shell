@@ -22,4 +22,9 @@ Vagrant.configure("2") do |config|
     precise64.vm.box_url = "http://files.vagrantup.com/precise64.box"
   end
 
+  config.vm.define "quantal64" do |quantal64|
+    quantal64.vm.box = "quantal64"
+    quantal64.vm.box_url = "http://cloud-images.ubuntu.com/vagrant/quantal/current/quantal-server-cloudimg-amd64-vagrant-disk1.box"
+  end
+
 end
