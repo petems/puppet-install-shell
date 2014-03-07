@@ -22,4 +22,9 @@ Vagrant.configure("2") do |config|
     precise64.vm.box_url = "http://files.vagrantup.com/precise64.box"
   end
 
+  config.vm.define "arch64" do |arch64|
+    arch64.vm.box = "arch64"
+    # precise64.vm.box_url = # Generated from https://github.com/daimatz/arch64-packer
+  end
+
 end
