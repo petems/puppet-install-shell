@@ -158,6 +158,9 @@ elif test "x$os" = "xAIX"; then
   platform="aix"
   platform_version=`uname -v`
   machine="ppc"
+elif test -f /etc/os-release && grep -q ID=arch /etc/os-release; then
+  platform="arch"
+  platform_version=`uname -r`
 fi
 
 if test "x$platform" = "x"; then
