@@ -495,6 +495,8 @@ case $platform in
       "12.04") ubuntu_codename="precise";;
       "12.10") ubuntu_codename="quantal";;
       "13.04") ubuntu_codename="raring";;
+      "13.10") ubuntu_codename="saucy";;
+      "14.04") ubuntu_codename="trusty";;
     esac
     filetype="deb"
     filename="puppetlabs-release-${ubuntu_codename}.deb"
