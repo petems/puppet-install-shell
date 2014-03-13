@@ -27,4 +27,14 @@ Vagrant.configure("2") do |config|
     quantal64.vm.box_url = "http://cloud-images.ubuntu.com/vagrant/quantal/current/quantal-server-cloudimg-amd64-vagrant-disk1.box"
   end
 
+  config.vm.define "saucy64" do |saucy64|
+    saucy64.vm.box = "saucy64"
+    saucy64.vm.box_url = "http://cloud-images.ubuntu.com/vagrant/saucy/current/saucy-server-cloudimg-amd64-vagrant-disk1.box"
+  end
+
+  config.vm.define "trusty64" do |trusty64|
+    trusty64.vm.box = "trusty64"
+    trusty64.vm.box_url = "https://cloud-images.ubuntu.com/vagrant/trusty/current/trusty-server-cloudimg-amd64-vagrant-disk1.box"
+  end
+
 end
