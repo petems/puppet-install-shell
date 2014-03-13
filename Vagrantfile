@@ -24,7 +24,8 @@ Vagrant.configure("2") do |config|
 
   config.vm.define "arch64" do |arch64|
     arch64.vm.box = "arch64"
-    # precise64.vm.box_url = # Generated from https://github.com/daimatz/arch64-packer
+    arch64.vm.box_url = 'https://www.dropbox.com/s/c2nbeei1wi36ao6/packer_virtualbox-iso_virtualbox.box'
+    # Generated from https://github.com/daimatz/arch64-packer
   end
 
 end
