@@ -422,6 +422,10 @@ install_file() {
       info "installing with dpkg..."
       dpkg -i "$2"
       apt-get update -y
+      info "checking for distro-supplied puppet"
+      apt-get remove puppet -y || true
+      apt-get remove puppet-common -y || true
+      apt-get remove ruby-hiera -y || true
       if test "$version" = 'latest'; then
         apt-get install -y puppet-common puppet
       else
