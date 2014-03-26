@@ -476,7 +476,7 @@ case $platform in
     info "Red hat like platform! Lets get you an RPM..."
     filetype="rpm"
     filename="puppetlabs-release-${platform_version}-7.noarch.rpm"
-    download_url="http://yum.puppetlabs.com/el/${platform_version}/products/${arch}/${filename}"
+    download_url="http://yum.puppetlabs.com/el/${platform_version}/products/$machine/${filename}"
     ;;
   "debian")
     info "Debian platform! Lets get you a DEB..."
