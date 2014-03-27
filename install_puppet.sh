@@ -103,12 +103,12 @@ elif test -f "/etc/redhat-release"; then
   platform=`sed 's/^\(.\+\) release.*/\1/' /etc/redhat-release | tr '[A-Z]' '[a-z]'`
   platform_version=`sed 's/^.\+ release \([.0-9]\+\).*/\1/' /etc/redhat-release`
 
-  # If /etc/redhat-release exists, we act like RHEL by default
-  # if test "$platform" = "fedora"; then
-  #   # Change platform version for use below.
-  #   platform_version="6.0"
-  # fi
-  # platform="el"
+  #If /etc/redhat-release exists, we act like RHEL by default. Except for fedora
+  if test "$platform" = "fedora"; then
+    platform="fedora"
+  else 
+    platform="el"
+  fi
 elif test -f "/etc/system-release"; then
   platform=`sed 's/^\(.\+\) release.\+/\1/' /etc/system-release | tr '[A-Z]' '[a-z]'`
   platform_version=`sed 's/^.\+ release \([.0-9]\+\).*/\1/' /etc/system-release | tr '[A-Z]' '[a-z]'`
@@ -174,6 +174,7 @@ case $platform in
     platform_version=$major_version
     ;;
   "fedora")
+    platform_version=$major_version
     case $platform_version in  #See http://docs.puppetlabs.com/guides/puppetlabs_package_repositories.html#for-fedora
       "18") minor_version="7";;
       "19") minor_version="2";;
