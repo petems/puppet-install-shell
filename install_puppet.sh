@@ -104,11 +104,11 @@ elif test -f "/etc/redhat-release"; then
   platform_version=`sed 's/^.\+ release \([.0-9]\+\).*/\1/' /etc/redhat-release`
 
   # If /etc/redhat-release exists, we act like RHEL by default
-  if test "$platform" = "fedora"; then
-    # Change platform version for use below.
-    platform_version="6.0"
-  fi
-  platform="el"
+  # if test "$platform" = "fedora"; then
+  #   # Change platform version for use below.
+  #   platform_version="6.0"
+  # fi
+  # platform="el"
 elif test -f "/etc/system-release"; then
   platform=`sed 's/^\(.\+\) release.\+/\1/' /etc/system-release | tr '[A-Z]' '[a-z]'`
   platform_version=`sed 's/^.\+ release \([.0-9]\+\).*/\1/' /etc/system-release | tr '[A-Z]' '[a-z]'`
@@ -172,6 +172,13 @@ major_version=`echo $platform_version | cut -d. -f1`
 case $platform in
   "el")
     platform_version=$major_version
+    ;;
+  "fedora")
+    case $platform_version in  #See http://docs.puppetlabs.com/guides/puppetlabs_package_repositories.html#for-fedora
+      "18") minor_version="7";;
+      "19") minor_version="2";;
+      "20") minor_version="1";;
+    esac
     ;;
   "debian")
     case $major_version in
@@ -480,7 +487,13 @@ case $platform in
     info "Red hat like platform! Lets get you an RPM..."
     filetype="rpm"
     filename="puppetlabs-release-${platform_version}-7.noarch.rpm"
-    download_url="http://yum.puppetlabs.com/el/${platform_version}/products/$machine/${filename}"
+    download_url="http://yum.puppetlabs.com/el/${platform_version}/products/${machine}/${filename}"
+    ;;
+  "fedora")
+    info "Fedora platform! Lets get the RPM..."
+    filetype="rpm"
+    filename="puppetlabs-release-${platform_version}-${minor_version}.noarch.rpm"
+    download_url="http://yum.puppetlabs.com/fedora/f${platform_version}/products/${machine}/${filename}"
     ;;
   "debian")
     info "Debian platform! Lets get you a DEB..."
