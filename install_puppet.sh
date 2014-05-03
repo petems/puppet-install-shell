@@ -322,26 +322,6 @@ do_perl() {
   return 0
 }
 
-# do_python URL FILENAME
-do_python() {
-  info "Trying python..."
-  python -c "import sys,urllib2 ; sys.stdout.write(urllib2.urlopen(sys.argv[1]).read())" "$1" > "$2" 2>$tmp_stderr
-  rc=$?
-  # check for 404
-  grep "HTTP Error 404" $tmp_stderr 2>&1 >/dev/null
-  if test $? -eq 0; then
-    critical "ERROR 404"
-    unable_to_retrieve_package
-  fi
-
-  # check for bad return status or empty output
-  if test $rc -ne 0 || test ! -s "$2"; then
-    capture_tmp_stderr "python"
-    return 1
-  fi
-  return 0
-}
-
 do_checksum() {
   if exists sha256sum; then
     checksum=`sha256sum $1 | awk '{ print $1 }'`
@@ -398,10 +378,6 @@ do_download() {
 
   if exists perl; then
     do_perl $1 $2 && return 0
-  fi
-
-  if exists python; then
-    do_python $1 $2 && return 0
   fi
 
   unable_to_retrieve_package
