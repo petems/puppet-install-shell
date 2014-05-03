@@ -274,7 +274,7 @@ do_wget() {
 # do_curl URL FILENAME
 do_curl() {
   info "Trying curl..."
-  curl -sL -D $tmp_stderr "$1" > "$2"
+  curl -1 -sL -D $tmp_stderr "$1" > "$2"
   rc=$?
   # check for 404
   grep "404 Not Found" $tmp_stderr 2>&1 >/dev/null
