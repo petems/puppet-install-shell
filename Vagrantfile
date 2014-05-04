@@ -50,4 +50,8 @@ Vagrant.configure("2") do |config|
   config.vm.define "fedora19" do |fedora19|
     fedora19.vm.box = "chef/fedora-19"
   end
+
+  config.vm.define "arch1403" do |arch1404|
+    arch1404.vm.box = "cameronmalek/arch1403"
+  end
 end
