@@ -151,6 +151,9 @@ elif test -f "/etc/SuSE-release"; then
       platform="suse"
       platform_version=`awk '/^VERSION =/ { print $3 }' /etc/SuSE-release`
   fi
+elif test -f "/etc/arch-release"; then
+  platform="archlinux"
+  platform_version=`/usr/bin/uname -r`
 elif test "x$os" = "xFreeBSD"; then
   platform="freebsd"
   platform_version=`uname -r | sed 's/-.*//'`
@@ -164,6 +167,13 @@ if test "x$platform" = "x"; then
   critical "Unable to determine platform version!"
   report_bug
   exit 1
+fi
+
+if test "x$version" = "x"; then
+  version="latest";
+  info "Version parameter not defined, assuming latest";
+else
+  info "Version parameter defined: $version";
 fi
 
 # Mangle $platform_version to pull the correct build
@@ -274,7 +284,7 @@ do_wget() {
 # do_curl URL FILENAME
 do_curl() {
   info "Trying curl..."
-  curl -sL -D $tmp_stderr "$1" > "$2"
+  curl -1 -sL -D $tmp_stderr "$1" > "$2"
   rc=$?
   # check for 404
   grep "404 Not Found" $tmp_stderr 2>&1 >/dev/null
@@ -319,26 +329,6 @@ do_perl() {
     return 1
   fi
 
-  return 0
-}
-
-# do_python URL FILENAME
-do_python() {
-  info "Trying python..."
-  python -c "import sys,urllib2 ; sys.stdout.write(urllib2.urlopen(sys.argv[1]).read())" "$1" > "$2" 2>$tmp_stderr
-  rc=$?
-  # check for 404
-  grep "HTTP Error 404" $tmp_stderr 2>&1 >/dev/null
-  if test $? -eq 0; then
-    critical "ERROR 404"
-    unable_to_retrieve_package
-  fi
-
-  # check for bad return status or empty output
-  if test $rc -ne 0 || test ! -s "$2"; then
-    capture_tmp_stderr "python"
-    return 1
-  fi
   return 0
 }
 
@@ -400,22 +390,12 @@ do_download() {
     do_perl $1 $2 && return 0
   fi
 
-  if exists python; then
-    do_python $1 $2 && return 0
-  fi
-
   unable_to_retrieve_package
 }
 
 # install_file TYPE FILENAME
 # TYPE is "rpm", "deb", "solaris", or "sh"
 install_file() {
-  if test "$version" = ''; then
-    version="latest";
-    info "Version parameter not defined, assuming latest";
-  else
-    info "Version parameter defined: $version";
-  fi
   case "$1" in
     "rpm")
       info "installing with rpm..."
@@ -476,82 +456,119 @@ install_file() {
   fi
 }
 
-info "Downloading Puppet $version for ${platform}..."
-
-
+#Platforms that do not need downloads are in *, the rest get their own entry.
 case $platform in
-  "el")
-    info "Red hat like platform! Lets get you an RPM..."
-    filetype="rpm"
-    filename="puppetlabs-release-${platform_version}-7.noarch.rpm"
-    download_url="http://yum.puppetlabs.com/el/${platform_version}/products/${machine}/${filename}"
-    ;;
-  "fedora")
-    info "Fedora platform! Lets get the RPM..."
-    filetype="rpm"
-    filename="puppetlabs-release-${platform_version}-${minor_version}.noarch.rpm"
-    download_url="http://yum.puppetlabs.com/fedora/f${platform_version}/products/${machine}/${filename}"
-    ;;
-  "debian")
-    info "Debian platform! Lets get you a DEB..."
-    case $major_version in
-      "5") deb_codename="lenny";;
-      "6") deb_codename="squeeze";;
-      "7") deb_codename="wheezy";;
-    esac
-    filetype="deb"
-    filename="puppetlabs-release-${deb_codename}.deb"
-    download_url="http://apt.puppetlabs.com/${filename}"
-    ;;
-  "ubuntu")
-    info "Ubuntu platform! Lets get you a DEB..."
-    case $platform_version in
-      "12.04") ubuntu_codename="precise";;
-      "12.10") ubuntu_codename="quantal";;
-      "13.04") ubuntu_codename="raring";;
-      "13.10") ubuntu_codename="saucy";;
-      "14.04") ubuntu_codename="trusty";;
-    esac
-    filetype="deb"
-    filename="puppetlabs-release-${ubuntu_codename}.deb"
-    download_url="http://apt.puppetlabs.com/${filename}"
-    ;;
-  "mac_os_x")
-    info "Mac OS X platform! You need some DMGs..."
-    filetype="dmg"
-    if test "$version" = ''; then
-      version="3.4.3";
-      info "No version given, will assumed you want the latest as of 19-Feb-2014 $version";
-      info "If a new version has been released, open an issue https://github.com/petems/puppet-install-shell/";
+  "archlinux")
+    info "Installing Puppet $version for arch linux..."
+    if test "$version" = "latest"; then
+      pacman -Sy --noconfirm community/puppet
     else
-      info "Downloading $version dmg file";
+      warn "In Arch, the version only guarantees that you are installing the correct version."
+      pacman -Sy --noconfirm "community/puppet>=$version"
     fi
-    filename="puppet-${version}.dmg"
-    download_url="http://downloads.puppetlabs.com/mac/${filename}"
+    ;;
+  "freebsd")
+    info "Installing Puppet $version for FreeBSD..."
+    if test "$version" != "latest"; then
+      warn "In FreeBSD installation of older versions is not possible. Version is set to latest."
+    fi
+    case $major_version in
+      "9")
+        have_pkg=`grep -sc '^WITH_PKGNG' /etc/make.conf`
+        if test "$have_pkg" = 1; then
+          pkg install -y sysutils/puppet
+        else
+          pkg_add -rF puppet
+        fi
+        ;;
+      "10")
+        pkg install -y sysutils/puppet
+        ;;
+      *)
+        critical "Sorry FreeBSD $major_version is not supported yet!"
+        report_bug
+        exit 1
+        ;;
+    esac
     ;;
   *)
-    critical "Sorry $platform is not supported yet!"
-    report_bug
-    exit 1
+    info "Downloading Puppet $version for ${platform}..."
+    case $platform in
+      "el")
+        info "Red hat like platform! Lets get you an RPM..."
+        filetype="rpm"
+        filename="puppetlabs-release-${platform_version}-7.noarch.rpm"
+        download_url="http://yum.puppetlabs.com/el/${platform_version}/products/${machine}/${filename}"
+        ;;
+      "fedora")
+        info "Fedora platform! Lets get the RPM..."
+        filetype="rpm"
+        filename="puppetlabs-release-${platform_version}-${minor_version}.noarch.rpm"
+        download_url="http://yum.puppetlabs.com/fedora/f${platform_version}/products/${machine}/${filename}"
+        ;;
+      "debian")
+        info "Debian platform! Lets get you a DEB..."
+        case $major_version in
+          "5") deb_codename="lenny";;
+          "6") deb_codename="squeeze";;
+          "7") deb_codename="wheezy";;
+        esac
+        filetype="deb"
+        filename="puppetlabs-release-${deb_codename}.deb"
+        download_url="http://apt.puppetlabs.com/${filename}"
+        ;;
+      "ubuntu")
+        info "Ubuntu platform! Lets get you a DEB..."
+        case $platform_version in
+          "12.04") ubuntu_codename="precise";;
+          "12.10") ubuntu_codename="quantal";;
+          "13.04") ubuntu_codename="raring";;
+          "13.10") ubuntu_codename="saucy";;
+          "14.04") ubuntu_codename="trusty";;
+        esac
+        filetype="deb"
+        filename="puppetlabs-release-${ubuntu_codename}.deb"
+        download_url="http://apt.puppetlabs.com/${filename}"
+        ;;
+      "mac_os_x")
+        info "Mac OS X platform! You need some DMGs..."
+        filetype="dmg"
+        if test "$version" = ''; then
+          version="3.4.3";
+          info "No version given, will assumed you want the latest as of 19-Feb-2014 $version";
+          info "If a new version has been released, open an issue https://github.com/petems/puppet-install-shell/";
+        else
+          info "Downloading $version dmg file";
+        fi
+        filename="puppet-${version}.dmg"
+        download_url="http://downloads.puppetlabs.com/mac/${filename}"
+        ;;
+      *)
+        critical "Sorry $platform is not supported yet!"
+        report_bug
+        exit 1
+        ;;
+    esac
+
+    if test "x$cmdline_filename" != "x"; then
+      download_filename=$cmdline_filename
+    else
+      download_filename=$filename
+    fi
+
+    if test "x$cmdline_dl_dir" != "x"; then
+      download_filename="$cmdline_dl_dir/$download_filename"
+    else
+      download_filename="$tmp_dir/$download_filename"
+    fi
+
+    do_download "$download_url"  "$download_filename"
+
+    install_file $filetype "$download_filename"
     ;;
 esac
 
-if test "x$cmdline_filename" != "x"; then
-  download_filename=$cmdline_filename
-else
-  download_filename=$filename
-fi
-
-if test "x$cmdline_dl_dir" != "x"; then
-  download_filename="$cmdline_dl_dir/$download_filename"
-else
-  download_filename="$tmp_dir/$download_filename"
-fi
-
-do_download "$download_url"  "$download_filename"
-
-install_file $filetype "$download_filename"
-
+#Cleanup
 if test "x$tmp_dir" != "x"; then
   rm -r "$tmp_dir"
 fi
