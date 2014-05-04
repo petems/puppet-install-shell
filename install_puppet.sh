@@ -467,6 +467,30 @@ case $platform in
       pacman -Sy --noconfirm "community/puppet>=$version"
     fi
     ;;
+  "freebsd")
+    info "Installing Puppet $version for FreeBSD..."
+    if test "$version" != "latest"; then
+      warn "In FreeBSD installation of older versions is not possible. Version is set to latest."
+    fi
+    case $major_version in
+      "9")
+        have_pkg=`grep -sc '^WITH_PKGNG' /etc/make.conf`
+        if test "$have_pkg" = 1; then
+          pkg install -y sysutils/puppet
+        else
+          pkg_add -rF puppet
+        fi
+        ;;
+      "10")
+        pkg install -y sysutils/puppet
+        ;;
+      *)
+        critical "Sorry FreeBSD $major_version is not supported yet!"
+        report_bug
+        exit 1
+        ;;
+    esac
+    ;;
   *)
     info "Downloading Puppet $version for ${platform}..."
     case $platform in
