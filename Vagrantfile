@@ -11,6 +11,10 @@ Vagrant.configure("2") do |config|
     config.cache.auto_detect = false
   end
 
+  config.vm.define "centos510" do |centos510|
+    centos510.vm.box = "chef/centos-5.10"
+  end
+
   config.vm.define "centos65" do |centos65|
     centos65.vm.box = "chef/centos-6.5"
   end
@@ -31,24 +35,22 @@ Vagrant.configure("2") do |config|
     saucy64.vm.box = "chef/ubuntu-13.10"
   end
 
-  config.vm.define "centos510" do |centos510|
-    centos510.vm.box = "chef/centos-5.10"
+  config.vm.define "squeeze" do |squeeze|
+    squeeze.vm.box = "chef/debian-6.0.8"
   end
 
   config.vm.define "wheezy" do |wheezy|
     wheezy.vm.box = "chef/debian-7.4"
   end
 
-  config.vm.define "squeeze" do |squeeze|
-    squeeze.vm.box = "chef/debian-6.0.8"
+  config.vm.define "fedora19" do |fedora19|
+    fedora19.vm.box = "chef/fedora-19"
   end
 
   config.vm.define "fedora20" do |fedora20|
     fedora20.vm.box = "chef/fedora-20"
   end
 
-  config.vm.define "fedora19" do |fedora19|
-    fedora19.vm.box = "chef/fedora-19"
   end
 
   config.vm.define "arch1403" do |arch1404|
