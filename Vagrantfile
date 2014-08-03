@@ -60,16 +60,16 @@ Vagrant.configure("2") do |config|
 
   config.vm.define "arch1403" do |arch1404|
     arch1404.vm.box = "cameronmalek/arch1403"
+  config.vm.define "freebsd9" do |freebsd9|
+    freebsd9.ssh.shell = 'sh'
+    freebsd9.vm.guest = :freebsd
+    freebsd9.vm.box = "chef/freebsd-9.2"
   end
 
-#  Shared folder not available. Tested with:
-#   $ curl https://raw.githubusercontent.com/petems/puppet-install-shell/master/install_puppet.sh | sudo sh
-#
-#  config.vm.define "freebsd10" do |freebsd10|
-#    freebsd10.vm.box = "chef/freebsd-10.0"
-#  end
-#
-#  config.vm.define "freebsd9" do |freebsd9|
-#    freebsd9.vm.box = "chef/freebsd-9.2"
-#  end
+  config.vm.define "freebsd10" do |freebsd10|
+    freebsd10.ssh.shell = 'sh'
+    freebsd10.vm.guest = :freebsd
+    freebsd10.vm.box = "chef/freebsd-10.0"
+  end
+
 end
