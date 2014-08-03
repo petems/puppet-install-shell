@@ -56,10 +56,10 @@ Vagrant.configure("2") do |config|
     fedora20.vm.box = "chef/fedora-20"
   end
 
+  config.vm.define "arch" do |arch|
+    arch.vm.box = "losingkeys/arch"
   end
 
-  config.vm.define "arch1403" do |arch1404|
-    arch1404.vm.box = "cameronmalek/arch1403"
   config.vm.define "freebsd9" do |freebsd9|
     freebsd9.ssh.shell = 'sh'
     freebsd9.vm.guest = :freebsd
