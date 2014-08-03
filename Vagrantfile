@@ -5,7 +5,8 @@ Vagrant.configure("2") do |config|
 
   #Runs install-puppet.sh on provision. Use 'vagrant up && vagrant destroy' to test all boxes.
   config.vm.provision "shell", path: "install_puppet.sh"
-  
+  config.vm.provision "shell", inline: "puppet --version"
+
   # Want to make sure cachier doesn't give false positives
   if Vagrant.has_plugin?("vagrant-cachier")
     config.cache.auto_detect = false
