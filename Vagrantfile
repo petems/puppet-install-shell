@@ -1,6 +1,10 @@
 # -*- mode: ruby -*-
 # vi: set ft=ruby :
 
+if Vagrant::VERSION < '1.5.0'
+  fail 'This Vagrantfile uses Vagrantcloud, upgrade to > 1.5.0!'
+end
+
 Vagrant.configure("2") do |config|
 
   #Runs install-puppet.sh on provision. Use 'vagrant up && vagrant destroy' to test all boxes.
