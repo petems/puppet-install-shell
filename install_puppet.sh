@@ -43,6 +43,12 @@ critical () {
     log "${RED}CRIT${RESET}: ${1}"
 }
 
+utopic () {
+    warn "There is no utopic release yet, see https://tickets.puppetlabs.com/browse/CPR-92 for progress";
+    warn "We'll use the trusty package for now";
+    ubuntu_codename="trusty";
+}
+
 # Check whether a command exists - returns 0 if it does, 1 if it does not
 exists() {
   if command -v $1 >/dev/null 2>&1
@@ -106,7 +112,7 @@ elif test -f "/etc/redhat-release"; then
   #If /etc/redhat-release exists, we act like RHEL by default. Except for fedora
   if test "$platform" = "fedora"; then
     platform="fedora"
-  else 
+  else
     platform="el"
   fi
 elif test -f "/etc/system-release"; then
@@ -525,6 +531,7 @@ case $platform in
           "13.04") ubuntu_codename="raring";;
           "13.10") ubuntu_codename="saucy";;
           "14.04") ubuntu_codename="trusty";;
+          "14.10") utopic;;
         esac
         filetype="deb"
         filename="puppetlabs-release-${ubuntu_codename}.deb"
