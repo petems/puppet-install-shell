@@ -106,7 +106,7 @@ elif test -f "/etc/redhat-release"; then
   #If /etc/redhat-release exists, we act like RHEL by default. Except for fedora
   if test "$platform" = "fedora"; then
     platform="fedora"
-  else 
+  else
     platform="el"
   fi
 elif test -f "/etc/system-release"; then
@@ -524,7 +524,7 @@ case $platform in
           "12.10") ubuntu_codename="quantal";;
           "13.04") ubuntu_codename="raring";;
           "13.10") ubuntu_codename="saucy";;
-          "14.04") ubuntu_codename="trusty";;
+          "14.04") ubuntu_codename="trusty";;@@::@@@::@:@:@:@:@:@:@:@
         esac
         filetype="deb"
         filename="puppetlabs-release-${ubuntu_codename}.deb"
