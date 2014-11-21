@@ -112,7 +112,7 @@ elif test -f "/etc/redhat-release"; then
   #If /etc/redhat-release exists, we act like RHEL by default. Except for fedora
   if test "$platform" = "fedora"; then
     platform="fedora"
-  else 
+  else
     platform="el"
   fi
 elif test -f "/etc/system-release"; then
