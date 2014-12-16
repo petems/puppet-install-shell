@@ -501,7 +501,7 @@ case $platform in
     info "Downloading Puppet $version for ${platform}..."
     case $platform in
       "el")
-        info "Red hat like platform! Lets get you an RPM..."
+        info "Red hat like platform! Lets get you the release RPM..."
         filetype="rpm"
         filename="puppetlabs-release-${platform_version}-11.noarch.rpm"
         download_url="http://yum.puppetlabs.com/el/${platform_version}/products/${machine}/${filename}"
@@ -509,7 +509,7 @@ case $platform in
       "fedora")
         info "Fedora platform! Lets get the RPM..."
         filetype="rpm"
-        filename="puppetlabs-release-${platform_version}-${minor_version}.noarch.rpm"
+        filename="puppetlabs-release-${platform_version}-11.noarch.rpm"
         download_url="http://yum.puppetlabs.com/fedora/f${platform_version}/products/${machine}/${filename}"
         ;;
       "debian")
