@@ -503,7 +503,7 @@ case $platform in
       "el")
         info "Red hat like platform! Lets get you an RPM..."
         filetype="rpm"
-        filename="puppetlabs-release-${platform_version}-7.noarch.rpm"
+        filename="puppetlabs-release-${platform_version}-11.noarch.rpm"
         download_url="http://yum.puppetlabs.com/el/${platform_version}/products/${machine}/${filename}"
         ;;
       "fedora")
