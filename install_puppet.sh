@@ -404,8 +404,7 @@ do_download() {
 install_file() {
   case "$1" in
     "rpm")
-      info "installing with rpm..."
-      rpm -Uvh --oldpackage --replacepkgs "$2"
+      info "installing with yum..."
       if test "$version" = 'latest'; then
         yum install -y puppet
       else
