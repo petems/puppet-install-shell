@@ -24,6 +24,10 @@ Vagrant.configure("2") do |config|
     centos65.vm.box = "chef/centos-6.5"
   end
 
+  config.vm.define "centos7" do |centos65|
+    centos65.vm.box = "chef/centos-7.0"
+  end
+
   config.vm.define "precise64" do |precise64|
     precise64.vm.box = "chef/ubuntu-12.04"
   end
