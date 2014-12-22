@@ -404,8 +404,7 @@ do_download() {
 install_file() {
   case "$1" in
     "rpm")
-      info "installing with rpm..."
-      rpm -Uvh --oldpackage --replacepkgs "$2"
+      info "installing with yum..."
       if test "$version" = 'latest'; then
         yum install -y puppet
       else
@@ -419,7 +418,15 @@ install_file() {
       if test "$version" = 'latest'; then
         apt-get install -y puppet-common puppet
       else
-        apt-get install -y puppet-common=$version-1puppetlabs1 puppet=$version-1puppetlabs1 --force-yes
+        case "$version" in
+          *[^2.7.]*)
+            info "2.7.* Puppet deb package tied to Facter < 2.0.0, specifying Facter 1.7.4"
+            apt-get install -y puppet-common=$version-1puppetlabs1 puppet=$version-1puppetlabs1 facter=1.7.4-1puppetlabs1 --force-yes
+            ;;
+          *)
+            apt-get install -y puppet-common=$version-1puppetlabs1 puppet=$version-1puppetlabs1 --force-yes
+            ;;
+        esac
       fi
       ;;
     "solaris")
