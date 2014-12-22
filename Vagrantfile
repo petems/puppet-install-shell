@@ -65,6 +65,12 @@ Vagrant.configure("2") do |config|
     saucy64.vm.provision "shell", inline: "puppet --version"
   end
 
+  config.vm.define "trusty64" do |trusty64|
+    trusty64.vm.box = "chef/ubuntu-14.04"
+    trusty64.vm.provision "shell", path: "install_puppet.sh"
+    trusty64.vm.provision "shell", inline: "puppet --version"
+  end
+
   config.vm.define "squeeze" do |squeeze|
     squeeze.vm.box = "chef/debian-6.0.8"
     squeeze.vm.provision "shell", path: "install_puppet.sh"
