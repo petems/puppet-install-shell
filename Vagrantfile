@@ -12,6 +12,13 @@ Vagrant.configure("2") do |config|
     config.cache.auto_detect = false
   end
 
+  config.vm.define "centos_362" do |centos_362|
+    centos_362.vm.box = 'centos6.5'
+    centos_362.vm..box_url = "http://puppet-vagrant-boxes.puppetlabs.com/centos-65-x64-virtualbox-nocm.box"
+    centos_362.vm.provision "shell", path: "install_puppet.sh", args: "-v 3.6.2"
+    centos_362.vm.provision "shell", inline: "puppet --version"
+  end
+
   # Test for facter issue from https://github.com/petems/vagrant-puppet-install/issues/6
   config.vm.define "GH6" do |gh6|
     gh6.vm.box = "chef/ubuntu-12.04-i386"
