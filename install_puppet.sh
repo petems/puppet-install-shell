@@ -195,6 +195,7 @@ case $platform in
       "18") minor_version="7";;
       "19") minor_version="2";;
       "20") minor_version="1";;
+      "21") minor_version="11";;
     esac
     ;;
   "debian")
