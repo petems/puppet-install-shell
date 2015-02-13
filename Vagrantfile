@@ -102,6 +102,12 @@ Vagrant.configure("2") do |config|
     fedora20.vm.provision "shell", inline: "puppet --version"
   end
 
+  config.vm.define "fedora21" do |fedora20|
+    fedora20.vm.box = "chef/fedora-21"
+    fedora20.vm.provision "shell", path: "install_puppet.sh"
+    fedora20.vm.provision "shell", inline: "puppet --version"
+  end
+
   config.vm.define "arch" do |arch|
     arch.vm.box = "losingkeys/arch"
     arch.vm.provision "shell", path: "install_puppet.sh"
