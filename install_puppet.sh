@@ -551,7 +551,7 @@ case $platform in
         info "Mac OS X platform! You need some DMGs..."
         filetype="dmg"
         if test "$version" = ''; then
-          version="3.4.3";
+          version="3.8.1";
           info "No version given, will assumed you want the latest as of 19-Feb-2014 $version";
           info "If a new version has been released, open an issue https://github.com/petems/puppet-install-shell/";
         else
