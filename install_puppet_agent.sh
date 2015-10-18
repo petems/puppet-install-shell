@@ -1,8 +1,9 @@
 #!/bin/sh
 # WARNING: REQUIRES /bin/sh
 #
-# Install Puppet-Agent with shell
+# Install Puppet with shell... how hard can it be?
 #
+# 0.0.1a - Here Be Dragons
 #
 
 # Set up colours
@@ -79,7 +80,7 @@ do
     f)  cmdline_filename="$OPTARG";;
     d)  cmdline_dl_dir="$OPTARG";;
     h) echo >&2 \
-      "install_puppet.sh - A shell script to install Puppet, asumming no dependancies
+      "install_puppet_agent.sh - A shell script to install Puppet Agent > 4.0.0, asumming no dependancies
       usage:
       -v   version         version to install, defaults to $latest_version
       -f   filename        filename for downloaded file, defaults to original name
@@ -179,6 +180,23 @@ if test "x$version" = "x"; then
   info "Version parameter not defined, assuming latest";
 else
   info "Version parameter defined: $version";
+  info "Matching Puppet version to puppet-agent package version (See http://docs.puppetlabs.com/puppet/latest/reference/about_agent.html for more details)"
+  case "$version" in
+  [^4.0.]*)
+    $version = '1.0.1'
+    ;;
+  [^4.1.]*)
+    $version = '1.1.1'
+    ;;
+  [^4.2.]*)
+    $version = '1.2.6'
+    ;;
+  *)
+    critical "Unable to match requested puppet version to puppet-agent version - Check http://docs.puppetlabs.com/puppet/latest/reference/about_agent.html"
+    report_bug
+    exit 1
+  ;;
+  esac
 fi
 
 # Mangle $platform_version to pull the correct build
@@ -413,25 +431,15 @@ install_file() {
       fi
       ;;
     "deb")
-      info "installing with dpkg..."
+      info "installing puppetlabs apt repo with dpkg..."
       dpkg -i "$2"
       apt-get update -y
       if test "$version" = 'latest'; then
         apt-get install -y puppet-agent
-      else
-        case "$version" in
-          *)
-            apt-get install -y puppet-agent=$version --force-yes
-          ;;
-        esac
       fi
       ;;
     "solaris")
       critical "Solaris not supported yet"
-      ;;
-    "sh" )
-      info "installing with sh..."
-      sh "$2"
       ;;
     "dmg" )
       critical "Puppet-Agent Not Supported Yet: $1"
@@ -463,14 +471,14 @@ case $platform in
       "el")
         info "Red hat like platform! Lets get you an RPM..."
         filetype="rpm"
-        filename="puppetlabs-release-pc1-${platform_version}-11.noarch.rpm"
-        download_url="http://yum.puppetlabs.com/el/${platform_version}/products/${machine}/${filename}"
+        filename="puppetlabs-release-pc1-el-${platform_version}.noarch.rpm"
+        download_url="http://yum.puppetlabs.com/${filename}"
         ;;
       "fedora")
         info "Fedora platform! Lets get the RPM..."
         filetype="rpm"
-        filename="puppetlabs-release-pc1-${platform_version}-${minor_version}.noarch.rpm"
-        download_url="http://yum.puppetlabs.com/fedora/f${platform_version}/products/${machine}/${filename}"
+        filename="puppetlabs-release-pc1-el-${platform_version}.noarch.rpm"
+        download_url="http://yum.puppetlabs.com/${filename}"
         ;;
       "debian")
         info "Debian platform! Lets get you a DEB..."
