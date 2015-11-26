@@ -182,20 +182,20 @@ else
   info "Version parameter defined: $version";
   info "Matching Puppet version to puppet-agent package version (See http://docs.puppetlabs.com/puppet/latest/reference/about_agent.html for more details)"
   case "$version" in
-  [^4.0.]*)
-    $version = '1.0.1'
-    ;;
-  [^4.1.]*)
-    $version = '1.1.1'
-    ;;
-  [^4.2.]*)
-    $version = '1.2.6'
-    ;;
-  *)
-    critical "Unable to match requested puppet version to puppet-agent version - Check http://docs.puppetlabs.com/puppet/latest/reference/about_agent.html"
-    report_bug
-    exit 1
-  ;;
+    [^4.0.]*)
+      $puppet_agent_version='1.0.1'
+      ;;
+    [^4.1.]*)
+      $puppet_agent_version='1.1.1'
+      ;;
+    [^4.2.]*)
+      $puppet_agent_version='1.2.6'
+      ;;
+    *)
+      critical "Unable to match requested puppet version to puppet-agent version - Check http://docs.puppetlabs.com/puppet/latest/reference/about_agent.html"
+      report_bug
+      exit 1
+      ;;
   esac
 fi
 
@@ -427,7 +427,7 @@ install_file() {
       if test "$version" = 'latest'; then
         yum install -y puppet-agent
       else
-        yum install -y "puppet-agent-$version"
+        yum install -y "puppet-agent-${puppet_agent_version}"
       fi
       ;;
     "deb")
@@ -436,6 +436,8 @@ install_file() {
       apt-get update -y
       if test "$version" = 'latest'; then
         apt-get install -y puppet-agent
+      else
+        apt-get install -y "puppet-agent-${puppet_agent_version}"
       fi
       ;;
     "solaris")
