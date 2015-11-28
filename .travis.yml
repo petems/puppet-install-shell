@@ -1,3 +1,4 @@
+sudo: false
 script:
   - bash -n install_puppet.sh
   - sudo bash install_puppet.sh
