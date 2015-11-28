@@ -182,14 +182,17 @@ else
   info "Version parameter defined: $version";
   info "Matching Puppet version to puppet-agent package version (See http://docs.puppetlabs.com/puppet/latest/reference/about_agent.html for more details)"
   case "$version" in
-      $puppet_agent_version='1.0.1'
     4.0.*)
+      puppet_agent_version='1.0.1'
       ;;
-      $puppet_agent_version='1.1.1'
     4.1.*)
+      puppet_agent_version='1.1.1'
       ;;
-      $puppet_agent_version='1.2.6'
     4.2.*)
+      puppet_agent_version='1.2.7'
+      ;;
+    4.3.*)
+      puppet_agent_version='1.3.0'
       ;;
     *)
       critical "Unable to match requested puppet version to puppet-agent version - Check http://docs.puppetlabs.com/puppet/latest/reference/about_agent.html"
