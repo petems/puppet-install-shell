@@ -98,6 +98,22 @@ shift `expr $OPTIND - 1`
 machine=`uname -m`
 os=`uname -s`
 
+if test "x$version" = "x"; then
+  version="latest";
+  info "Version parameter not defined, assuming latest";
+else
+  case "$version" in
+    4.*)
+      critical "Puppet 4 changed how packages are delivered, see here: http://docs.puppetlabs.com/puppet/4.2/reference/about_agent.html";
+      critical "install_puppet.sh is only valid up to version 3.8.4, beyond that use install_puppet_agent.sh";
+      exit 1;
+    ;;
+    *)
+      info "Version parameter defined: $version"
+    ;;
+  esac
+fi
+
 # Retrieve Platform and Platform Version
 if test -f "/etc/lsb-release" && grep -q DISTRIB_ID /etc/lsb-release; then
   platform=`grep DISTRIB_ID /etc/lsb-release | cut -d "=" -f 2 | tr '[A-Z]' '[a-z]'`
@@ -173,13 +189,6 @@ if test "x$platform" = "x"; then
   critical "Unable to determine platform version!"
   report_bug
   exit 1
-fi
-
-if test "x$version" = "x"; then
-  version="latest";
-  info "Version parameter not defined, assuming latest";
-else
-  info "Version parameter defined: $version";
 fi
 
 # Mangle $platform_version to pull the correct build
