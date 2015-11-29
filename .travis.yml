@@ -1,4 +1,4 @@
-sudo: false
+# Has to be run as sudo
 script:
   - bash -n install_puppet.sh
   - sudo bash install_puppet.sh
