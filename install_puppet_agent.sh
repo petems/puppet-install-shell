@@ -484,6 +484,8 @@ case $platform in
       "10")
         pkg install -y sysutils/puppet4
         ;;
+    esac
+  ;;
   *)
     info "Downloading Puppet $version for ${platform}..."
     case $platform in
