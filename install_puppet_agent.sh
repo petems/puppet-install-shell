@@ -468,8 +468,22 @@ case $platform in
     critical "Not got Puppet-agent not supported on Arch yet"
     ;;
   "freebsd")
-    critical "Not got Puppet-agent not supported on FreeBSD yet"
-    ;;
+    info "Installing Puppet $version for FreeBSD..."
+    if test "$version" != "latest"; then
+      warn "In FreeBSD installation of older versions is not possible. Version is set to latest."
+    fi
+    case $major_version in
+      "9")
+        have_pkg=`grep -sc '^WITH_PKGNG' /etc/make.conf`
+        if test "$have_pkg" = 1; then
+          pkg install -y sysutils/puppet4
+        else
+          pkg_add -rF puppet4
+        fi
+        ;;
+      "10")
+        pkg install -y sysutils/puppet4
+        ;;
   *)
     info "Downloading Puppet $version for ${platform}..."
     case $platform in
