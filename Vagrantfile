@@ -26,9 +26,9 @@ Vagrant.configure("2") do |config|
   end
 
   config.vm.define "centos67" do |centos67|
-    centos65.vm.box = "bento/centos-6.7"
-    centos65.vm.provision "shell", path: "install_puppet.sh"
-    centos65.vm.provision "shell", inline: "puppet --version"
+    centos67.vm.box = "bento/centos-6.7"
+    centos67.vm.provision "shell", path: "install_puppet.sh"
+    centos67.vm.provision "shell", inline: "puppet --version"
   end
 
   config.vm.define "centos7" do |centos7|
