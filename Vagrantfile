@@ -77,6 +77,12 @@ Vagrant.configure("2") do |config|
     wheezy.vm.provision "shell", inline: "puppet --version"
   end
 
+  config.vm.define "jessie" do |jessie|
+    jessie.vm.box = "bento/debian-8.2"
+    jessie.vm.provision "shell", path: "install_puppet_agent.sh"
+    jessie.vm.provision "shell", inline: "puppet --version"
+  end
+
   config.vm.define "fedora19" do |fedora19|
     fedora19.vm.box = "bento/fedora-19"
     fedora19.vm.provision "shell", path: "install_puppet.sh"
