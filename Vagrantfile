@@ -12,6 +12,18 @@ Vagrant.configure("2") do |config|
     config.cache.auto_detect = false
   end
 
+  config.vm.define "vivid_puppet_agent" do |vivid_puppet_agent|
+    vivid_puppet_agent.vm.box = "ubuntu/vivid64"
+    vivid_puppet_agent.vm.provision "shell", path: "install_puppet_agent.sh", args: "-v 4.3.1"
+    vivid_puppet_agent.vm.provision "shell", inline: "puppet --version"
+  end
+
+  config.vm.define "trusty_puppet_agent" do |trusty_puppet_agent|
+    trusty_puppet_agent.vm.box = "ubuntu/trusty64"
+    trusty_puppet_agent.vm.provision "shell", path: "install_puppet_agent.sh", args: "-v 4.3.1"
+    trusty_puppet_agent.vm.provision "shell", inline: "puppet --version"
+  end
+
   # Test for facter issue from https://github.com/petems/vagrant-puppet-install/issues/6
   config.vm.define "GH6" do |gh6|
     gh6.vm.box = "bento/ubuntu-12.04-i386"
