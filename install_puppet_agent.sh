@@ -440,7 +440,11 @@ install_file() {
       if test "$version" = 'latest'; then
         apt-get install -y puppet-agent
       else
-        apt-get install -y "puppet-agent=${puppet_agent_version}"
+        if test "x$ubuntu_codename" != "x"; then
+          apt-get install -y "puppet-agent=${puppet_agent_version}-1${ubuntu_codename}"
+        else
+          apt-get install -y "puppet-agent=${puppet_agent_version}"
+        fi
       fi
       ;;
     "solaris")
