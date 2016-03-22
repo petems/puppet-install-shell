@@ -1,5 +1,13 @@
-# Has to be run as sudo
-script:
-  - bash -n install_puppet.sh
-  - sudo bash install_puppet.sh
 language: c
+matrix:
+  include:
+    - sudo: required
+      script:
+        - bash -n install_puppet.sh
+        - sudo bash install_puppet.sh
+        - sudo puppet --version | grep 3.8
+    - sudo: required
+      script:
+        - bash -n install_puppet_agent.sh
+        - sudo bash install_puppet_agent.sh
+        # - sudo puppet --version | grep 4.4 # Need to figure out how to source newer puppet in travis
