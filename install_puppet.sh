@@ -192,10 +192,9 @@ case $platform in
   "fedora")
     platform_version=$major_version
     case $platform_version in  #See http://docs.puppetlabs.com/guides/puppetlabs_package_repositories.html#for-fedora
-      "18") minor_version="7";;
-      "19") minor_version="2";;
-      "20") minor_version="1";;
-      "21") minor_version="11";;
+      "20") platform_version="20";;
+      *) info "Puppet only offers an official repo for Puppet 3.X for Fedora 20, so using that repo"
+         platform_version="20";;
     esac
     ;;
   "debian")
@@ -512,14 +511,14 @@ case $platform in
       "el")
         info "Red hat like platform! Lets get you an RPM..."
         filetype="rpm"
-        filename="puppetlabs-release-${platform_version}-11.noarch.rpm"
-        download_url="http://yum.puppetlabs.com/el/${platform_version}/products/${machine}/${filename}"
+        filename="puppetlabs-release-el-${platform_version}.noarch.rpm"
+        download_url="http://yum.puppetlabs.com/${filename}"
         ;;
       "fedora")
         info "Fedora platform! Lets get the RPM..."
         filetype="rpm"
-        filename="puppetlabs-release-${platform_version}-${minor_version}.noarch.rpm"
-        download_url="http://yum.puppetlabs.com/fedora/f${platform_version}/products/${machine}/${filename}"
+        filename="puppetlabs-release-fedora-${platform_version}.noarch.rpm"
+        download_url="http://yum.puppetlabs.com/${filename}"
         ;;
       "debian")
         info "Debian platform! Lets get you a DEB..."

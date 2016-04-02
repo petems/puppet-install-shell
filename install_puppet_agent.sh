@@ -213,12 +213,9 @@ case $platform in
     platform_version=$major_version
     ;;
   "fedora")
-    platform_version=$major_version
-    case $platform_version in  #See http://docs.puppetlabs.com/guides/puppetlabs_package_repositories.html#for-fedora
-      "18") minor_version="7";;
-      "19") minor_version="2";;
-      "20") minor_version="1";;
-      "21") minor_version="11";;
+    case $major_version in
+      "23") platform_version="22";;
+      *) platform_version=$major_version;;
     esac
     ;;
   "debian")
@@ -505,7 +502,7 @@ case $platform in
       "fedora")
         info "Fedora platform! Lets get the RPM..."
         filetype="rpm"
-        filename="puppetlabs-release-pc1-el-${platform_version}.noarch.rpm"
+        filename="puppetlabs-release-pc1-fedora-${platform_version}.noarch.rpm"
         download_url="http://yum.puppetlabs.com/${filename}"
         ;;
       "debian")
