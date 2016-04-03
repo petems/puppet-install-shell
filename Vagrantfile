@@ -24,27 +24,35 @@ Vagrant.configure("2") do |config|
     trusty_puppet_agent.vm.provision "shell", inline: "puppet --version"
   end
 
+  config.vm.define "fedora23_puppet_agent" do |fedora23_puppet_agent|
+    fedora23_puppet_agent.vm.box = "fedora/23-cloud-base"
+    fedora23_puppet_agent.vm.provision "shell", path: "install_puppet_agent.sh", args: "-v 4.3.1"
+    fedora23_puppet_agent.vm.provision "shell", inline: "puppet --version"
+  end
+
   # Test for facter issue from https://github.com/petems/vagrant-puppet-install/issues/6
   config.vm.define "GH6" do |gh6|
     gh6.vm.box = "bento/ubuntu-12.04-i386"
-    gh6.vm.provision "shell", path: "install_puppet.sh", args: "-v 2.7.23 -fv 1.7.6"
+    gh6.vm.provision "shell", path: "install_puppet.sh", args: "-v 2.7.23"
     gh6.vm.provision "shell", inline: "puppet --version"
   end
 
   config.vm.define "GH6_centos" do |gh6_centos|
-    gh6_centos.vm.box = "bento/centos-6.5"
-    gh6_centos.vm.provision "shell", path: "install_puppet.sh", args: "-v 2.7.23 -fv 1.7.6"
+    gh6_centos.vm.box = "puppetlabs/centos-6.6-64-nocm"
+    gh6_centos.vm.provision "shell", path: "install_puppet.sh", args: "-v 2.7.23"
     gh6_centos.vm.provision "shell", inline: "puppet --version"
   end
 
   config.vm.define "centos67" do |centos67|
-    centos67.vm.box = "bento/centos-6.7"
+    centos67.vm.box = "puppetlabs/centos-6.6-64-nocm"
     centos67.vm.provision "shell", path: "install_puppet.sh"
     centos67.vm.provision "shell", inline: "puppet --version"
   end
 
   config.vm.define "centos7" do |centos7|
-    centos7.vm.box = "bento/centos-7.1"
+    centos7.vm.box = "puppetlabs/centos-7.2-64-nocm"
+    centos7.vm.provision "shell", path: "install_puppet.sh"
+    centos7.vm.provision "shell", inline: "puppet --version"
   end
 
   config.vm.define "precise64" do |precise64|
