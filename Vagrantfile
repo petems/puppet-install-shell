@@ -30,6 +30,18 @@ Vagrant.configure("2") do |config|
     fedora23_puppet_agent.vm.provision "shell", inline: "puppet --version"
   end
 
+  config.vm.define "jessie_non_agent" do |jessie|
+    jessie.vm.box = "debian/jessie64"
+    jessie.vm.provision "shell", path: "install_puppet.sh", args: "-v 3.7.2-4"
+    jessie.vm.provision "shell", inline: "puppet --version"
+  end
+
+  config.vm.define "wheezy" do |wheezy|
+    wheezy.vm.box = "debian/wheezy64"
+    wheezy.vm.provision "shell", path: "install_puppet.sh", args: "-v 3.7.2"
+    wheezy.vm.provision "shell", inline: "puppet --version"
+  end
+
   # Test for facter issue from https://github.com/petems/vagrant-puppet-install/issues/6
   config.vm.define "GH6" do |gh6|
     gh6.vm.box = "bento/ubuntu-12.04-i386"
@@ -89,12 +101,6 @@ Vagrant.configure("2") do |config|
     squeeze.vm.box = "bento/debian-6.0.8"
     squeeze.vm.provision "shell", path: "install_puppet.sh"
     squeeze.vm.provision "shell", inline: "puppet --version"
-  end
-
-  config.vm.define "wheezy" do |wheezy|
-    wheezy.vm.box = "bento/debian-7.4"
-    wheezy.vm.provision "shell", path: "install_puppet.sh"
-    wheezy.vm.provision "shell", inline: "puppet --version"
   end
 
   config.vm.define "jessie" do |jessie|
