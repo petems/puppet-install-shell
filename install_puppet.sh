@@ -419,13 +419,31 @@ install_file() {
       if test "$version" = 'latest'; then
         apt-get install -y puppet-common puppet
       else
+        case $platform in
+          "ubuntu")
+            version_string="$version-1puppetlabs1"
+            facter_string="1.7.4-1puppetlabs1"
+          ;;
+          "debian")
+            case $deb_codename in
+              "jessie")
+                version_string="$version"
+                facter_string="1.7.4"
+                ;;
+              *)
+                version_string="$version-1puppetlabs1"
+                facter_string="1.7.4-1puppetlabs1"
+                ;;
+             esac
+            ;;
+          esac
         case "$version" in
           [^2.7.]*)
             info "2.7.* Puppet deb package tied to Facter < 2.0.0, specifying Facter 1.7.4"
-            apt-get install -y puppet-common=$version-1puppetlabs1 puppet=$version-1puppetlabs1 facter=1.7.4-1puppetlabs1 --force-yes
+            apt-get install -y puppet-common=$version_string puppet=$version_string facter=$facter_string --force-yes
             ;;
           *)
-            apt-get install -y puppet-common=$version-1puppetlabs1 puppet=$version-1puppetlabs1 --force-yes
+            apt-get install -y puppet-common=$version_string puppet=$version_string --force-yes
             ;;
         esac
       fi
@@ -526,7 +544,8 @@ case $platform in
           "5") deb_codename="lenny";;
           "6") deb_codename="squeeze";;
           "7") deb_codename="wheezy";;
-          "8") deb_codename="jessie";;
+          "8") warn "Puppet only offers Puppet 4 packages for Jessie, so only 3.7.2 package avaliable"
+          deb_codename="jessie";;
         esac
         filetype="deb"
         filename="puppetlabs-release-${deb_codename}.deb"
