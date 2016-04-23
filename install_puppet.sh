@@ -44,8 +44,8 @@ critical () {
 }
 
 utopic () {
-    warn "There is no utopic release yet, see https://tickets.puppetlabs.com/browse/CPR-92 for progress";
-    warn "We'll use the trusty package for now";
+    warn "There is no utopic release yet, and it's now EOL";
+    warn "Recomend updating, but we'll use the trusty package for now: http://fridge.ubuntu.com/2015/07/03/ubuntu-14-10-utopic-unicorn-reaches-end-of-life-on-july-23-2015/";
     ubuntu_codename="trusty";
 }
 
