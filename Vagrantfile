@@ -24,6 +24,12 @@ Vagrant.configure("2") do |config|
     trusty_puppet_agent.vm.provision "shell", inline: "puppet --version"
   end
 
+  config.vm.define "xenial_puppet_agent" do |xenial_puppet_agent|
+    xenial_puppet_agent.vm.box = "ubuntu/xenial64"
+    xenial_puppet_agent.vm.provision "shell", path: "install_puppet_agent.sh"
+    xenial_puppet_agent.vm.provision "shell", inline: "puppet --version"
+  end
+
   config.vm.define "fedora23_puppet_agent" do |fedora23_puppet_agent|
     fedora23_puppet_agent.vm.box = "fedora/23-cloud-base"
     fedora23_puppet_agent.vm.provision "shell", path: "install_puppet_agent.sh", args: "-v 4.3.1"
@@ -53,6 +59,12 @@ Vagrant.configure("2") do |config|
     gh6_centos.vm.box = "puppetlabs/centos-6.6-64-nocm"
     gh6_centos.vm.provision "shell", path: "install_puppet.sh", args: "-v 2.7.23"
     gh6_centos.vm.provision "shell", inline: "puppet --version"
+  end
+
+  config.vm.define "xenial_puppet" do |xenial_puppet|
+    xenial_puppet.vm.box = "ubuntu/xenial64"
+    xenial_puppet.vm.provision "shell", path: "install_puppet.sh"
+    xenial_puppet.vm.provision "shell", inline: "puppet --version"
   end
 
   config.vm.define "centos67" do |centos67|

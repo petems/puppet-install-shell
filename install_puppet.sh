@@ -239,6 +239,10 @@ unable_to_retrieve_package() {
   exit 1
 }
 
+random_hexdump () {
+  hexdump -n 2 -e '/2 "%u"' /dev/urandom
+}
+
 if test "x$TMPDIR" = "x"; then
   tmp="/tmp"
 else
@@ -246,14 +250,16 @@ else
 fi
 
 # Random function since not all shells have $RANDOM
-random () {
-    hexdump -n 2 -e '/2 "%u"' /dev/urandom
-}
+if exists hexdump; then
+  random_number=random_hexdump
+else
+  random_number=`date +%N`
+fi
 
-tmp_dir="$tmp/install.sh.$$.`random`"
+tmp_dir="$tmp/install.sh.$$.$random_number"
 (umask 077 && mkdir $tmp_dir) || exit 1
 
-tmp_stderr="$tmp/stderr.$$.`random`"
+tmp_stderr="$tmp/stderr.$$.$random_number"
 
 capture_tmp_stderr() {
   # spool up tmp_stderr from all the commands we called
@@ -399,13 +405,11 @@ do_download() {
   unable_to_retrieve_package
 }
 
-# install_file TYPE FILENAME
+# install_puppet_package TYPE
 # TYPE is "rpm", "deb", "solaris", or "sh"
-install_file() {
+install_puppet_package() {
   case "$1" in
     "rpm")
-      info "installing puppetlabs yum repo with rpm..."
-      rpm -Uvh --oldpackage --replacepkgs "$2"
       if test "$version" = 'latest'; then
         yum install -y puppet
       else
@@ -413,8 +417,6 @@ install_file() {
       fi
       ;;
     "deb")
-      info "installing with dpkg..."
-      dpkg -i "$2"
       apt-get update -y
       if test "$version" = 'latest'; then
         apt-get install -y puppet-common puppet
@@ -488,6 +490,29 @@ install_file() {
   fi
 }
 
+install_puppetlabs_repo() {
+  case "$1" in
+    "rpm")
+      info "installing puppetlabs yum repo with rpm..."
+      rpm -Uvh --oldpackage --replacepkgs "$2"
+      ;;
+    "deb")
+      info "installing puppetlabs apt repo with dpkg..."
+      dpkg -i "$2"
+      ;;
+    *)
+      critical "Unknown filetype: $1"
+      report_bug
+      exit 1
+      ;;
+  esac
+  if test $? -ne 0; then
+    critical "Installation failed"
+    report_bug
+    exit 1
+  fi
+}
+
 #Platforms that do not need downloads are in *, the rest get their own entry.
 case $platform in
   "archlinux")
@@ -545,7 +570,7 @@ case $platform in
           "6") deb_codename="squeeze";;
           "7") deb_codename="wheezy";;
           "8") warn "Puppet only offers Puppet 4 packages for Jessie, so only 3.7.2 package avaliable"
-          deb_codename="jessie";;
+          no_puppetlab_repo_download=true;;
         esac
         filetype="deb"
         filename="puppetlabs-release-${deb_codename}.deb"
@@ -559,6 +584,7 @@ case $platform in
           "13.04") ubuntu_codename="raring";;
           "13.10") ubuntu_codename="saucy";;
           "14.04") ubuntu_codename="trusty";;
+          "16.04") ubuntu_codename="xenial";;
           "14.10") utopic;;
         esac
         filetype="deb"
@@ -597,9 +623,14 @@ case $platform in
       download_filename="$tmp_dir/$download_filename"
     fi
 
-    do_download "$download_url"  "$download_filename"
+    if $no_puppetlab_repo_download; then
+      warn 'Skipping download of Puppet repistory, using distro upstream instead'
+    else
+      do_download "$download_url"  "$download_filename"
+      install_puppetlabs_repo $filetype "$download_filename"
+    fi
 
-    install_file $filetype "$download_filename"
+    install_puppet_package $filetype
     ;;
 esac
 

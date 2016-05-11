@@ -260,6 +260,10 @@ unable_to_retrieve_package() {
   exit 1
 }
 
+random_hexdump () {
+  hexdump -n 2 -e '/2 "%u"' /dev/urandom
+}
+
 if test "x$TMPDIR" = "x"; then
   tmp="/tmp"
 else
@@ -267,14 +271,16 @@ else
 fi
 
 # Random function since not all shells have $RANDOM
-random () {
-    hexdump -n 2 -e '/2 "%u"' /dev/urandom
-}
+if exists hexdump; then
+  random_number=random_hexdump
+else
+  random_number="`date +%N`"
+fi
 
-tmp_dir="$tmp/install.sh.$$.`random`"
+tmp_dir="$tmp/install.sh.$$.$random_number"
 (umask 077 && mkdir $tmp_dir) || exit 1
 
-tmp_stderr="$tmp/stderr.$$.`random`"
+tmp_stderr="$tmp/stderr.$$.$random_number"
 
 capture_tmp_stderr() {
   # spool up tmp_stderr from all the commands we called
@@ -527,6 +533,7 @@ case $platform in
           "14.04") ubuntu_codename="trusty";;
           "15.04") ubuntu_codename="vivid";;
           "15.10") ubuntu_codename="wily";;
+          "16.04") ubuntu_codename="xenial";;
           "14.10") utopic;;
         esac
         filetype="deb"

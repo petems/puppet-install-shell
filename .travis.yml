@@ -1,13 +1,13 @@
-language: c
+---
+language: ruby
 matrix:
+  fast_finish: true
   include:
-    - sudo: required
-      script:
-        - bash -n install_puppet.sh
-        - sudo bash install_puppet.sh
-        - sudo puppet --version | grep 3.8
-    - sudo: required
-      script:
-        - bash -n install_puppet_agent.sh
-        - sudo bash install_puppet_agent.sh
-        # - sudo puppet --version | grep 4.4 # Need to figure out how to source newer puppet in travis
+  - rvm: '2.1'
+    sudo: required
+    services: docker
+    script: bundle exec rspec spec/install_puppet/ubuntu_1604_spec.rb
+  - rvm: '2.1'
+    sudo: required
+    services: docker
+    script: bundle exec rspec spec/install_puppet_agent/ubuntu_1604_spec.rb
