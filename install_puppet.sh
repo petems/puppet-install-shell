@@ -399,13 +399,11 @@ do_download() {
   unable_to_retrieve_package
 }
 
-# install_file TYPE FILENAME
+# install_puppet_package TYPE
 # TYPE is "rpm", "deb", "solaris", or "sh"
-install_file() {
+install_puppet_package() {
   case "$1" in
     "rpm")
-      info "installing puppetlabs yum repo with rpm..."
-      rpm -Uvh --oldpackage --replacepkgs "$2"
       if test "$version" = 'latest'; then
         yum install -y puppet
       else
@@ -413,8 +411,6 @@ install_file() {
       fi
       ;;
     "deb")
-      info "installing with dpkg..."
-      dpkg -i "$2"
       apt-get update -y
       if test "$version" = 'latest'; then
         apt-get install -y puppet-common puppet
@@ -488,6 +484,29 @@ install_file() {
   fi
 }
 
+install_puppetlabs_repo() {
+  case "$1" in
+    "rpm")
+      info "installing puppetlabs yum repo with rpm..."
+      rpm -Uvh --oldpackage --replacepkgs "$2"
+      ;;
+    "deb")
+      info "installing puppetlabs apt repo with dpkg..."
+      dpkg -i "$2"
+      ;;
+    *)
+      critical "Unknown filetype: $1"
+      report_bug
+      exit 1
+      ;;
+  esac
+  if test $? -ne 0; then
+    critical "Installation failed"
+    report_bug
+    exit 1
+  fi
+}
+
 #Platforms that do not need downloads are in *, the rest get their own entry.
 case $platform in
   "archlinux")
@@ -545,7 +564,7 @@ case $platform in
           "6") deb_codename="squeeze";;
           "7") deb_codename="wheezy";;
           "8") warn "Puppet only offers Puppet 4 packages for Jessie, so only 3.7.2 package avaliable"
-          deb_codename="jessie";;
+          no_puppetlab_repo_download=true;;
         esac
         filetype="deb"
         filename="puppetlabs-release-${deb_codename}.deb"
@@ -597,9 +616,14 @@ case $platform in
       download_filename="$tmp_dir/$download_filename"
     fi
 
-    do_download "$download_url"  "$download_filename"
+    if $no_puppetlab_repo_download; then
+      warn 'Skipping download of Puppet repistory, using distro upstream instead'
+    else
+      do_download "$download_url"  "$download_filename"
+      install_puppetlabs_repo $filetype "$download_filename"
+    fi
 
-    install_file $filetype "$download_filename"
+    install_puppet_package $filetype
     ;;
 esac
 
