@@ -578,6 +578,7 @@ case $platform in
           "13.04") ubuntu_codename="raring";;
           "13.10") ubuntu_codename="saucy";;
           "14.04") ubuntu_codename="trusty";;
+          "16.04") ubuntu_codename="xenial";;
           "14.10") utopic;;
         esac
         filetype="deb"

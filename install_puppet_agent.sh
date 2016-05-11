@@ -527,6 +527,7 @@ case $platform in
           "14.04") ubuntu_codename="trusty";;
           "15.04") ubuntu_codename="vivid";;
           "15.10") ubuntu_codename="wily";;
+          "16.04") ubuntu_codename="xenial";;
           "14.10") utopic;;
         esac
         filetype="deb"
