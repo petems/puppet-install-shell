@@ -1,0 +1,7 @@
+FROM centos:6
+MAINTAINER Peter Souter <p.morsou@gmail.com>
+LABEL puppet_install_shell="centos_6"
+RUN yum update -y
+RUN yum update install curl -y
+COPY ./install_puppet.sh /
+COPY ./install_puppet_agent.sh /
