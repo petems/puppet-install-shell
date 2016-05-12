@@ -570,7 +570,7 @@ case $platform in
           "6") deb_codename="squeeze";;
           "7") deb_codename="wheezy";;
           "8") warn "Puppet only offers Puppet 4 packages for Jessie, so only 3.7.2 package avaliable"
-          no_puppetlab_repo_download=true;;
+          no_puppetlab_repo_download='yes';;
         esac
         filetype="deb"
         filename="puppetlabs-release-${deb_codename}.deb"
@@ -584,7 +584,8 @@ case $platform in
           "13.04") ubuntu_codename="raring";;
           "13.10") ubuntu_codename="saucy";;
           "14.04") ubuntu_codename="trusty";;
-          "16.04") ubuntu_codename="xenial";;
+          "16.04") warn "Puppet only offers Puppet 4 packages for Xenial, so only 3.7.2 package avaliable"
+          no_puppetlab_repo_download="yes";;
           "14.10") utopic;;
         esac
         filetype="deb"
@@ -623,7 +624,7 @@ case $platform in
       download_filename="$tmp_dir/$download_filename"
     fi
 
-    if $no_puppetlab_repo_download; then
+    if test "x$no_puppetlab_repo_download" != "x"; then
       warn 'Skipping download of Puppet repistory, using distro upstream instead'
     else
       do_download "$download_url"  "$download_filename"
