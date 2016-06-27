@@ -569,7 +569,7 @@ case $platform in
           "5") deb_codename="lenny";;
           "6") deb_codename="squeeze";;
           "7") deb_codename="wheezy";;
-          "8") warn "Puppet only offers Puppet 4 packages for Jessie, so only 3.7.2 package avaliable"
+          "8") deb_codename="jessie"; warn "Puppet only offers Puppet 4 packages for Jessie, so only 3.7.2 package avaliable"
           no_puppetlab_repo_download='yes';;
         esac
         filetype="deb"
