@@ -44,9 +44,15 @@ critical () {
 }
 
 utopic () {
-    warn "There is no utopic release yet, see https://tickets.puppetlabs.com/browse/CPR-92 for progress";
+    warn "There is no utopic release";
     warn "We'll use the trusty package for now";
     ubuntu_codename="trusty";
+}
+
+yakkety () {
+    warn "There is no yakkety release";
+    warn "We'll use the xenial package for now";
+    ubuntu_codename="xenial";
 }
 
 # Check whether a command exists - returns 0 if it does, 1 if it does not
@@ -546,6 +552,7 @@ case $platform in
           "15.04") ubuntu_codename="vivid";;
           "15.10") ubuntu_codename="wily";;
           "16.04") ubuntu_codename="xenial";;
+          "16.10") yakkety;;
           "14.10") utopic;;
         esac
         filetype="deb"
