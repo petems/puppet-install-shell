@@ -207,7 +207,7 @@ else
       puppet_agent_version='1.7.1'
       ;;
     4.8.*)
-      puppet_agent_version='1.8.2'
+      puppet_agent_version='1.8.3'
       ;;
     4.9.*)
       puppet_agent_version='1.9.1'
