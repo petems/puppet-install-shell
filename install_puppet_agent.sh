@@ -447,6 +447,10 @@ install_file() {
   case "$1" in
     "rpm")
       info "installing puppetlabs yum repo with rpm..."
+      if test -f "/etc/yum.repos.d/puppetlabs-pc1.repo"; then
+        info "existing puppetlabs yum repo found, moving to old location"
+        mv /etc/yum.repos.d/puppetlabs-pc1.repo /etc/yum.repos.d/puppetlabs-pc1.repo.old
+      fi
       rpm -Uvh --oldpackage --replacepkgs "$2"
       if test "$version" = 'latest'; then
         yum install -y puppet-agent
