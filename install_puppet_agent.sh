@@ -216,7 +216,7 @@ else
       puppet_agent_version='1.9.3'
       ;;
     4.10.*)
-      puppet_agent_version='1.10.2'
+      puppet_agent_version='1.10.3'
       ;;
     *)
       critical "Unable to match requested puppet version to puppet-agent version - Check http://docs.puppetlabs.com/puppet/latest/reference/about_agent.html"
