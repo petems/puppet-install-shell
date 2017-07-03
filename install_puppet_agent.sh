@@ -560,6 +560,7 @@ case $platform in
           "15.10") ubuntu_codename="wily";;
           "16.04") ubuntu_codename="xenial";;
           "16.10") ubuntu_codename="yakkety";;
+          "17.04") ubuntu_codename="zesty";;
           "14.10") utopic;;
         esac
         filetype="deb"
