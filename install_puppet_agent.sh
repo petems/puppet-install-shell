@@ -543,6 +543,7 @@ case $platform in
           "6") deb_codename="squeeze";;
           "7") deb_codename="wheezy";;
           "8") deb_codename="jessie";;
+          "9") deb_codename="stretch";;
         esac
         filetype="deb"
         filename="puppetlabs-release-pc1-${deb_codename}.deb"
