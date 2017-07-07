@@ -15,3 +15,9 @@ matrix:
     script:
       - bundle exec rspec spec/install_puppet_agent/centos_6_spec.rb
       - bundle exec rspec spec/install_puppet_agent/ubuntu_1604_spec.rb
+  - rvm: '2.1'
+    sudo: required
+    services: docker
+    script:
+      - bundle exec rspec spec/install_puppet_5_agent/centos_6_spec.rb
+      - bundle exec rspec spec/install_puppet_5_agent/ubuntu_1604_spec.rb
