@@ -179,7 +179,16 @@ if test "x$version" = "x"; then
   version="latest";
   info "Version parameter not defined, assuming latest";
 else
-  info "Version parameter defined: $version";
+  case "$version" in
+    4*)
+      critical "Cannot install Puppet >= 4 with this script, you need to use install_puppet_agent.sh"
+      report_bug
+      exit 1
+      ;;
+    *)
+      info "Version parameter defined: $version";
+      ;;
+  esac
 fi
 
 # Mangle $platform_version to pull the correct build
