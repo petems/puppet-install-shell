@@ -5,3 +5,4 @@ RUN yum update -y
 RUN yum update install curl -y
 COPY ./install_puppet.sh /
 COPY ./install_puppet_agent.sh /
+COPY ./install_puppet_5_agent.sh /

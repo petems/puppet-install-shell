@@ -80,9 +80,9 @@ do
     f)  cmdline_filename="$OPTARG";;
     d)  cmdline_dl_dir="$OPTARG";;
     h) echo >&2 \
-      "install_puppet_agent.sh - A shell script to install Puppet Agent > 4.0.0, asumming no dependancies
+      "install_puppet_agent.sh - A shell script to install Puppet Agent > 4.0.0, assuming no dependencies
       usage:
-      -v   version         version to install, defaults to $latest_version
+      -v   version         version to install, defaults to \$latest_version
       -f   filename        filename for downloaded file, defaults to original name
       -d   download_dir    filename for downloaded file, defaults to /tmp/(random-number)"
       exit 0;;

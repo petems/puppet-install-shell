@@ -1,7 +1,7 @@
 #!/bin/sh
 # WARNING: REQUIRES /bin/sh
 #
-# Install Puppet with shell... how hard can it be?
+# Install puppet-agent with shell... how hard can it be?
 #
 # 0.0.1a - Here Be Dragons
 #
@@ -44,8 +44,8 @@ critical () {
 }
 
 utopic () {
-    warn "There is no utopic release yet, and it's now EOL";
-    warn "Recomend updating, but we'll use the trusty package for now: http://fridge.ubuntu.com/2015/07/03/ubuntu-14-10-utopic-unicorn-reaches-end-of-life-on-july-23-2015/";
+    warn "There is no utopic release yet, see https://tickets.puppetlabs.com/browse/CPR-92 for progress";
+    warn "We'll use the trusty package for now";
     ubuntu_codename="trusty";
 }
 
@@ -80,7 +80,7 @@ do
     f)  cmdline_filename="$OPTARG";;
     d)  cmdline_dl_dir="$OPTARG";;
     h) echo >&2 \
-      "install_puppet.sh - A shell script to install Puppet, assuming no dependencies
+      "install_puppet_agent.sh - A shell script to install Puppet Agent > 5.0.0, assuming no dependencies
       usage:
       -v   version         version to install, defaults to \$latest_version
       -f   filename        filename for downloaded file, defaults to original name
@@ -180,6 +180,17 @@ if test "x$version" = "x"; then
   info "Version parameter not defined, assuming latest";
 else
   info "Version parameter defined: $version";
+  info "Matching Puppet version to puppet-agent package version (See http://docs.puppetlabs.com/puppet/latest/reference/about_agent.html for more details)"
+  case "$version" in
+    5.0.*)
+      puppet_agent_version='5.0.0'
+      ;;
+    *)
+      critical "Unable to match requested puppet version to puppet-agent version - Check http://docs.puppetlabs.com/puppet/latest/reference/about_agent.html"
+      report_bug
+      exit 1
+      ;;
+  esac
 fi
 
 # Mangle $platform_version to pull the correct build
@@ -190,11 +201,9 @@ case $platform in
     platform_version=$major_version
     ;;
   "fedora")
-    platform_version=$major_version
-    case $platform_version in  #See http://docs.puppetlabs.com/guides/puppetlabs_package_repositories.html#for-fedora
-      "20") platform_version="20";;
-      *) info "Puppet only offers an official repo for Puppet 3.X for Fedora 20, so using that repo"
-         platform_version="20";;
+    case $major_version in
+      "23") platform_version="22";;
+      *) platform_version=$major_version;;
     esac
     ;;
   "debian")
@@ -253,7 +262,7 @@ fi
 if exists hexdump; then
   random_number=random_hexdump
 else
-  random_number=`date +%N`
+  random_number="`date +%N`"
 fi
 
 tmp_dir="$tmp/install.sh.$$.$random_number"
@@ -405,100 +414,42 @@ do_download() {
   unable_to_retrieve_package
 }
 
-# install_puppet_package TYPE
+# install_file TYPE FILENAME
 # TYPE is "rpm", "deb", "solaris", or "sh"
-install_puppet_package() {
-  case "$1" in
-    "rpm")
-      if test "$version" = 'latest'; then
-        yum install -y puppet
-      else
-        yum install -y "puppet-$version"
-      fi
-      ;;
-    "deb")
-      apt-get update -y
-      if test "$version" = 'latest'; then
-        apt-get install -y puppet-common puppet
-      else
-        case $platform in
-          "ubuntu")
-            version_string="$version-1puppetlabs1"
-            facter_string="1.7.4-1puppetlabs1"
-          ;;
-          "debian")
-            case $deb_codename in
-              "jessie")
-                version_string="$version"
-                facter_string="1.7.4"
-                ;;
-              *)
-                version_string="$version-1puppetlabs1"
-                facter_string="1.7.4-1puppetlabs1"
-                ;;
-             esac
-            ;;
-          esac
-        case "$version" in
-          [^2.7.]*)
-            info "2.7.* Puppet deb package tied to Facter < 2.0.0, specifying Facter 1.7.4"
-            apt-get install -y puppet-common=$version_string puppet=$version_string facter=$facter_string --force-yes
-            ;;
-          *)
-            apt-get install -y puppet-common=$version_string puppet=$version_string --force-yes
-            ;;
-        esac
-      fi
-      ;;
-    "solaris")
-      info "installing with pkgadd..."
-      echo "conflict=nocheck" > /tmp/nocheck
-      echo "action=nocheck" >> /tmp/nocheck
-      echo "mail=" >> /tmp/nocheck
-      pkgrm -a /tmp/nocheck -n puppet >/dev/null 2>&1 || true
-      pkgadd -n -d "$2" -a /tmp/nocheck puppet
-      ;;
-    "sh" )
-      info "installing with sh..."
-      sh "$2"
-      ;;
-    "dmg" )
-      info "installing with installer..."
-      hdiutil attach $2
-      info "Installer may require sudo access, the script might ask for your root password"
-      sudo installer -verboseR -target / -package /Volumes/puppet-${version}/puppet-${version}.pkg
-      # code via stackoverflow, woot -- installer might not be done at exit
-      # http://stackoverflow.com/questions/18752257/delay-from-osx-installer
-      flag=1
-      while [ $flag -ne 0 ]
-          do
-              sleep 1
-              hdiutil unmount /Volumes/puppet-${version}
-              flag=$?
-          done
-      ;;
-    *)
-      critical "Unknown filetype: $1"
-      report_bug
-      exit 1
-      ;;
-  esac
-  if test $? -ne 0; then
-    critical "Installation failed"
-    report_bug
-    exit 1
-  fi
-}
-
-install_puppetlabs_repo() {
+install_file() {
   case "$1" in
     "rpm")
       info "installing puppetlabs yum repo with rpm..."
+      if test -f "/etc/yum.repos.d/puppetlabs-pc1.repo"; then
+        info "existing puppetlabs yum repo found, moving to old location"
+        mv /etc/yum.repos.d/puppetlabs-pc1.repo /etc/yum.repos.d/puppetlabs-pc1.repo.old
+      fi
       rpm -Uvh --oldpackage --replacepkgs "$2"
+      if test "$version" = 'latest'; then
+        yum install -y puppet-agent
+      else
+        yum install -y "puppet-agent-${puppet_agent_version}"
+      fi
       ;;
     "deb")
       info "installing puppetlabs apt repo with dpkg..."
       dpkg -i "$2"
+      apt-get update -y
+      if test "$version" = 'latest'; then
+        apt-get install -y puppet-agent
+      else
+        if test "x$ubuntu_codename" != "x"; then
+          apt-get install -y "puppet-agent=${puppet_agent_version}-1${ubuntu_codename}"
+        else
+          apt-get install -y "puppet-agent=${puppet_agent_version}"
+        fi
+      fi
+      ;;
+    "solaris")
+      critical "Solaris not supported yet"
+      ;;
+    "dmg" )
+      critical "Puppet-Agent Not Supported Yet: $1"
       ;;
     *)
       critical "Unknown filetype: $1"
@@ -516,37 +467,10 @@ install_puppetlabs_repo() {
 #Platforms that do not need downloads are in *, the rest get their own entry.
 case $platform in
   "archlinux")
-    info "Installing Puppet $version for arch linux..."
-    if test "$version" = "latest"; then
-      pacman -Sy --noconfirm community/puppet
-    else
-      warn "In Arch, the version only guarantees that you are installing the correct version."
-      pacman -Sy --noconfirm "community/puppet>=$version"
-    fi
+    critical "Not got Puppet-agent not supported on Arch yet"
     ;;
   "freebsd")
-    info "Installing Puppet $version for FreeBSD..."
-    if test "$version" != "latest"; then
-      warn "In FreeBSD installation of older versions is not possible. Version is set to latest."
-    fi
-    case $major_version in
-      "9")
-        have_pkg=`grep -sc '^WITH_PKGNG' /etc/make.conf`
-        if test "$have_pkg" = 1; then
-          pkg install -y sysutils/puppet
-        else
-          pkg_add -rF puppet
-        fi
-        ;;
-      "10")
-        pkg install -y sysutils/puppet
-        ;;
-      *)
-        critical "Sorry FreeBSD $major_version is not supported yet!"
-        report_bug
-        exit 1
-        ;;
-    esac
+    critical "Not got Puppet-agent not supported on freebsd yet"
     ;;
   *)
     info "Downloading Puppet $version for ${platform}..."
@@ -554,14 +478,14 @@ case $platform in
       "el")
         info "Red hat like platform! Lets get you an RPM..."
         filetype="rpm"
-        filename="puppetlabs-release-el-${platform_version}.noarch.rpm"
-        download_url="http://yum.puppetlabs.com/${filename}"
+        filename="puppet5-release-el-${platform_version}.noarch.rpm"
+        download_url="http://yum.puppetlabs.com/puppet5/${filename}"
         ;;
       "fedora")
         info "Fedora platform! Lets get the RPM..."
         filetype="rpm"
-        filename="puppetlabs-release-fedora-${platform_version}.noarch.rpm"
-        download_url="http://yum.puppetlabs.com/${filename}"
+        filename="puppet5-release-fedora-${platform_version}.noarch.rpm"
+        download_url="http://yum.puppetlabs.com/puppet5/${filename}"
         ;;
       "debian")
         info "Debian platform! Lets get you a DEB..."
@@ -569,11 +493,11 @@ case $platform in
           "5") deb_codename="lenny";;
           "6") deb_codename="squeeze";;
           "7") deb_codename="wheezy";;
-          "8") deb_codename="jessie"; warn "Puppet only offers Puppet 4 packages for Jessie, so only 3.7.2 package avaliable"
-          no_puppetlab_repo_download='yes';;
+          "8") deb_codename="jessie";;
+          "9") deb_codename="stretch";;
         esac
         filetype="deb"
-        filename="puppetlabs-release-${deb_codename}.deb"
+        filename="puppet5-release-${deb_codename}.deb"
         download_url="http://apt.puppetlabs.com/${filename}"
         ;;
       "ubuntu")
@@ -584,26 +508,19 @@ case $platform in
           "13.04") ubuntu_codename="raring";;
           "13.10") ubuntu_codename="saucy";;
           "14.04") ubuntu_codename="trusty";;
-          "16.04") warn "Puppet only offers Puppet 4 packages for Xenial, so only 3.7.2 package avaliable"
-          no_puppetlab_repo_download="yes";;
+          "15.04") ubuntu_codename="vivid";;
+          "15.10") ubuntu_codename="wily";;
+          "16.04") ubuntu_codename="xenial";;
+          "16.10") ubuntu_codename="yakkety";;
+          "17.04") ubuntu_codename="zesty";;
           "14.10") utopic;;
         esac
         filetype="deb"
-        filename="puppetlabs-release-${ubuntu_codename}.deb"
+        filename="puppet5-release-${ubuntu_codename}.deb"
         download_url="http://apt.puppetlabs.com/${filename}"
         ;;
       "mac_os_x")
-        info "Mac OS X platform! You need some DMGs..."
-        filetype="dmg"
-        if test "$version" = ''; then
-          version="3.8.4";
-          info "No version given, will assumed you want the latest as of 19-Feb-2014 $version";
-          info "If a new version has been released, open an issue https://github.com/petems/puppet-install-shell/";
-        else
-          info "Downloading $version dmg file";
-        fi
-        filename="puppet-${version}.dmg"
-        download_url="http://downloads.puppetlabs.com/mac/${filename}"
+        critical "Script doesn't Puppet-agent not supported on OSX yet"
         ;;
       *)
         critical "Sorry $platform is not supported yet!"
@@ -624,14 +541,9 @@ case $platform in
       download_filename="$tmp_dir/$download_filename"
     fi
 
-    if test "x$no_puppetlab_repo_download" != "x"; then
-      warn 'Skipping download of Puppet repistory, using distro upstream instead'
-    else
-      do_download "$download_url"  "$download_filename"
-      install_puppetlabs_repo $filetype "$download_filename"
-    fi
+    do_download "$download_url"  "$download_filename"
 
-    install_puppet_package $filetype
+    install_file $filetype "$download_filename"
     ;;
 esac
 
