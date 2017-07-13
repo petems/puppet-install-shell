@@ -46,7 +46,7 @@ critical () {
 utopic () {
     warn "There is no utopic release yet, see https://tickets.puppetlabs.com/browse/CPR-92 for progress";
     warn "We'll use the trusty package for now";
-    ubuntu_codename="trusty";
+    deb_codename="trusty";
 }
 
 # Check whether a command exists - returns 0 if it does, 1 if it does not
@@ -438,8 +438,8 @@ install_file() {
       if test "$version" = 'latest'; then
         apt-get install -y puppet-agent
       else
-        if test "x$ubuntu_codename" != "x"; then
-          apt-get install -y "puppet-agent=${puppet_agent_version}-1${ubuntu_codename}"
+        if test "x$deb_codename" != "x"; then
+          apt-get install -y "puppet-agent=${puppet_agent_version}-1${deb_codename}"
         else
           apt-get install -y "puppet-agent=${puppet_agent_version}"
         fi
@@ -503,20 +503,20 @@ case $platform in
       "ubuntu")
         info "Ubuntu platform! Lets get you a DEB..."
         case $platform_version in
-          "12.04") ubuntu_codename="precise";;
-          "12.10") ubuntu_codename="quantal";;
-          "13.04") ubuntu_codename="raring";;
-          "13.10") ubuntu_codename="saucy";;
-          "14.04") ubuntu_codename="trusty";;
-          "15.04") ubuntu_codename="vivid";;
-          "15.10") ubuntu_codename="wily";;
-          "16.04") ubuntu_codename="xenial";;
-          "16.10") ubuntu_codename="yakkety";;
-          "17.04") ubuntu_codename="zesty";;
+          "12.04") deb_codename="precise";;
+          "12.10") deb_codename="quantal";;
+          "13.04") deb_codename="raring";;
+          "13.10") deb_codename="saucy";;
+          "14.04") deb_codename="trusty";;
+          "15.04") deb_codename="vivid";;
+          "15.10") deb_codename="wily";;
+          "16.04") deb_codename="xenial";;
+          "16.10") deb_codename="yakkety";;
+          "17.04") deb_codename="zesty";;
           "14.10") utopic;;
         esac
         filetype="deb"
-        filename="puppet5-release-${ubuntu_codename}.deb"
+        filename="puppet5-release-${deb_codename}.deb"
         download_url="http://apt.puppetlabs.com/${filename}"
         ;;
       "mac_os_x")
