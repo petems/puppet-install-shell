@@ -1,5 +1,6 @@
 #!/bin/sh
 # WARNING: REQUIRES /bin/sh
+# This file is install_puppet_5_agent.sh
 #
 # Install puppet-agent with shell... how hard can it be?
 #
