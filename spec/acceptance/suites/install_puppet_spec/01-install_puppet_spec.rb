@@ -9,7 +9,7 @@ describe 'install_puppet.sh with no arguments' do
     end
     if os[:family] == 'debian'
       its(:stdout) { should match /Debian platform! Lets get you a DEB.../ }
-      if os[:release].to_f > 7
+      if os[:release].to_f == 8
         its(:stdout) { should match /Puppet only offers Puppet 4 packages for Jessie, so only 3.7.2 package avaliable/ }
       else
         its(:stdout) { should match /installing puppetlabs apt repo with dpkg.../ }
