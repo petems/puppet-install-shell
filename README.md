@@ -28,3 +28,13 @@ Puppet > 4.X
 ```
 $ wget -O - https://raw.githubusercontent.com/petems/puppet-install-shell/master/install_puppet_agent.sh | sudo sh
 ```
+
+## Running Acceptance Tests
+
+Pick an Operating System then run the rake helper:
+
+```bash
+bundle exec rake beaker:suites['install_puppet_spec','centos-7-docker']
+bundle exec rake beaker:suites['install_puppet_agent_spec','centos-7-docker']
+bundle exec rake beaker:suites['install_puppet_5_agent_spec','centos-7-docker']
+```

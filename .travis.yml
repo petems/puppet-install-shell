@@ -6,18 +6,18 @@ matrix:
   - rvm: '2.1'
     sudo: required
     services: docker
+    env: SUITE=centos-7-docker
     script:
-      - bundle exec rspec spec/install_puppet/centos_6_spec.rb
-      - bundle exec rspec spec/install_puppet/ubuntu_1604_spec.rb
+      - bundle exec rake acceptance:suite_on_nodeset['centos-7-docker']
   - rvm: '2.1'
     sudo: required
     services: docker
+    env: SUITE=debian-8-docker
     script:
-      - bundle exec rspec spec/install_puppet_agent/centos_6_spec.rb
-      - bundle exec rspec spec/install_puppet_agent/ubuntu_1604_spec.rb
+      - bundle exec rake acceptance:suite_on_nodeset['debian-8-docker']
   - rvm: '2.1'
     sudo: required
     services: docker
+    env: SUITE=ubuntu-1604-docker
     script:
-      - bundle exec rspec spec/install_puppet_5_agent/centos_6_spec.rb
-      - bundle exec rspec spec/install_puppet_5_agent/ubuntu_1604_spec.rb
+      - bundle exec rake acceptance:suite_on_nodeset['ubuntu-1604-docker']

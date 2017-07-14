@@ -1,8 +1,0 @@
-FROM ubuntu:16.04
-MAINTAINER Peter Souter <p.morsou@gmail.com>
-LABEL puppet_install_shell="ubuntu_1604"
-RUN apt-get update --yes
-RUN apt-get install curl apt-utils --yes
-COPY ./install_puppet.sh /
-COPY ./install_puppet_agent.sh /
-COPY ./install_puppet_5_agent.sh /
