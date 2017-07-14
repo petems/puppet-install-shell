@@ -6,15 +6,27 @@ matrix:
   - rvm: '2.1'
     sudo: required
     services: docker
+    env: SUITE=centos-6-docker
+    script:
+      - bundle exec rake acceptance:suite_on_nodeset['centos-6-docker']
+  - rvm: '2.1'
+    sudo: required
+    services: docker
     env: SUITE=centos-7-docker
     script:
-      - bundle exec rake acceptance:suite_on_nodeset['centos-7-docker']
+      - bundle exec rake acceptance:suite_on_nodeset['centos-6-docker']
   - rvm: '2.1'
     sudo: required
     services: docker
     env: SUITE=debian-8-docker
     script:
       - bundle exec rake acceptance:suite_on_nodeset['debian-8-docker']
+  - rvm: '2.1'
+    sudo: required
+    services: docker
+    env: SUITE=ubuntu-1404-docker
+    script:
+      - bundle exec rake acceptance:suite_on_nodeset['ubuntu-1404-docker']
   - rvm: '2.1'
     sudo: required
     services: docker
