@@ -34,7 +34,9 @@ $ wget -O - https://raw.githubusercontent.com/petems/puppet-install-shell/master
 Pick an Operating System then run the rake helper:
 
 ```bash
-bundle exec rake beaker:suites['install_puppet_spec','centos-7-docker']
-bundle exec rake beaker:suites['install_puppet_agent_spec','centos-7-docker']
-bundle exec rake beaker:suites['install_puppet_5_agent_spec','centos-7-docker']
+bundle exec rake acceptance:suite_on_nodeset['centos-6-docker']
+bundle exec rake acceptance:suite_on_nodeset['centos-7-docker']
+bundle exec rake acceptance:suite_on_nodeset['ubuntu-1404-docker']
+bundle exec rake acceptance:suite_on_nodeset['ubuntu-1604-docker']
+bundle exec rake acceptance:suite_on_nodeset['debian-8-docker']
 ```
