@@ -1,0 +1,18 @@
+HOSTS:
+  sles-11-x64:
+    roles:
+      - master
+    platform: sles-11-x64
+    image: barebuild/sles:11
+    hypervisor: docker
+    docker_cmd: ["/sbin/init"]
+    docker_preserve_image: true
+    docker_image_commands:
+      - zypper install -y augeas augeas-lenses pkgconfig
+      - zypper --non-interactive in glibc-locale
+      - echo "en_US.UTF-8 UTF-8" > /etc/sysconfig/language
+      - localedef -i en_US -f UTF-8 en_US.UTF-8
+      - printf "NAME="SLES"\nVERSION="11"\nVERSION_ID="11"\nPRETTY_NAME="SUSE Linux Enterprise Server 11"\nID="sles"\n" > /etc/os-release
+CONFIG:
+  type: foss
+  log_level: debug
