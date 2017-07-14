@@ -18,6 +18,12 @@ matrix:
   - rvm: '2.1'
     sudo: required
     services: docker
+    env: SUITE=debian-7-docker
+    script:
+      - bundle exec rake acceptance:suite_on_nodeset['debian-7-docker']
+  - rvm: '2.1'
+    sudo: required
+    services: docker
     env: SUITE=debian-8-docker
     script:
       - bundle exec rake acceptance:suite_on_nodeset['debian-8-docker']
