@@ -1,5 +1,6 @@
 #!/bin/sh
 # WARNING: REQUIRES /bin/sh
+# This file is install_puppet_5_agent.sh
 #
 # Install puppet-agent with shell... how hard can it be?
 #
@@ -182,6 +183,8 @@ else
   info "Version parameter defined: $version";
   info "Matching Puppet version to puppet-agent package version (See http://docs.puppetlabs.com/puppet/latest/reference/about_agent.html for more details)"
   case "$version" in
+    latest)
+      ;;
     5.0.*)
       puppet_agent_version='5.0.0'
       ;;
@@ -207,11 +210,7 @@ case $platform in
     esac
     ;;
   "debian")
-    case $major_version in
-      "5") platform_version="6";;
-      "6") platform_version="6";;
-      "7") platform_version="6";;
-    esac
+    platform_version='Unused'
     ;;
   "freebsd")
     platform_version=$major_version
