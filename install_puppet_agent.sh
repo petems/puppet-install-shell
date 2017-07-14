@@ -452,16 +452,26 @@ do_download() {
 install_file() {
   case "$1" in
     "rpm")
-      info "installing puppetlabs yum repo with rpm..."
-      if test -f "/etc/yum.repos.d/puppetlabs-pc1.repo"; then
-        info "existing puppetlabs yum repo found, moving to old location"
-        mv /etc/yum.repos.d/puppetlabs-pc1.repo /etc/yum.repos.d/puppetlabs-pc1.repo.old
-      fi
-      rpm -Uvh --oldpackage --replacepkgs "$2"
-      if test "$version" = 'latest'; then
-        yum install -y puppet-agent
+      if test "x$checksum" != "x$2"; then
+        rpm -Uvh --oldpackage --replacepkgs "$2"
+        rpm --import /etc/pki/rpm-gpg/RPM-GPG-KEY-puppetlabs-PC1
+        if test "$version" = 'latest'; then
+          zypper install -y puppet-agent
+        else
+          zypper install -y "puppet-agent-${puppet_agent_version}"
+        fi
       else
-        yum install -y "puppet-agent-${puppet_agent_version}"
+        info "installing puppetlabs yum repo with rpm..."
+        if test -f "/etc/yum.repos.d/puppetlabs-pc1.repo"; then
+          info "existing puppetlabs yum repo found, moving to old location"
+          mv /etc/yum.repos.d/puppetlabs-pc1.repo /etc/yum.repos.d/puppetlabs-pc1.repo.old
+        fi
+        rpm -Uvh --oldpackage --replacepkgs "$2"
+        if test "$version" = 'latest'; then
+          yum install -y puppet-agent
+        else
+          yum install -y "puppet-agent-${puppet_agent_version}"
+        fi
       fi
       ;;
     "deb")
@@ -570,6 +580,12 @@ case $platform in
         ;;
       "mac_os_x")
         critical "Script doesn't Puppet-agent not supported on OSX yet"
+        ;;
+      "sles")
+        info "SLES platform! Lets get the RPM..."
+        filetype="rpm"
+        filename="puppetlabs-release-pc1-1.1.0-5.sles${platform_version}.noarch.rpm"
+        download_url="https://yum.puppetlabs.com/sles/12/PC1/x86_64/${filename}"
         ;;
       *)
         critical "Sorry $platform is not supported yet!"
