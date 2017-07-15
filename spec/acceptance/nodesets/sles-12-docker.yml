@@ -1,0 +1,18 @@
+HOSTS:
+  sles-12-x64:
+    roles:
+      - master
+    platform: sles-12-x86_64
+    image: barebuild/sles:12
+    hypervisor: docker
+    docker_cmd: ["/sbin/init"]
+    docker_preserve_image: true
+    docker_image_commands:
+      - rm -rf /etc/zypp/repos.d/devel_languages_python.repo
+      - zypper clean -a
+      - zypper install --force-resolution -y augeas which
+      - ln -s /usr/lib/systemd/system/sshd.service /etc/systemd/system/multi-user.target.wants/sshd.service
+      - printf "NAME="SLES"\nVERSION="12"\nVERSION_ID="12"\nPRETTY_NAME="SUSE Linux Enterprise Server 12"\nID="sles"\n" > /etc/os-release
+CONFIG:
+  type: foss
+  log_level: debug

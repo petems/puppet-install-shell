@@ -12,6 +12,20 @@ Vagrant.configure("2") do |config|
     config.cache.auto_detect = false
   end
 
+  config.vm.define "sles_12_puppet_agent" do |sles_12_puppet_agent|
+    sles_12_puppet_agent.vm.box = "elastic/sles-12-x86_64"
+    sles_12_puppet_agent.vm.provision "shell", inline: "zypper -n rm puppet-agent"
+    sles_12_puppet_agent.vm.provision "shell", path: "install_puppet_agent.sh", args: "-v 4.6.2"
+    sles_12_puppet_agent.vm.provision "shell", inline: "/opt/puppetlabs/bin/puppet --version"
+  end
+
+  config.vm.define "sles_11_puppet_agent" do |sles_11_puppet_agent|
+    sles_11_puppet_agent.vm.box = "elastic/sles-11-x86_64"
+    sles_11_puppet_agent.vm.provision "shell", inline: "zypper -n rm puppet-agent"
+    sles_11_puppet_agent.vm.provision "shell", path: "install_puppet_agent.sh", args: "-v 4.6.2"
+    sles_11_puppet_agent.vm.provision "shell", inline: "/opt/puppetlabs/bin/puppet --version"
+  end
+
   config.vm.define "vivid_puppet_agent" do |vivid_puppet_agent|
     vivid_puppet_agent.vm.box = "ubuntu/vivid64"
     vivid_puppet_agent.vm.provision "shell", path: "install_puppet_agent.sh", args: "-v 4.3.1"
