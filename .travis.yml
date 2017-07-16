@@ -14,7 +14,7 @@ matrix:
     services: docker
     env: SUITE=centos-7-docker
     script:
-      - bundle exec rake acceptance:suite_on_nodeset['centos-6-docker']
+      - bundle exec rake acceptance:suite_on_nodeset['centos-7-docker']
   - rvm: '2.1'
     sudo: required
     services: docker
