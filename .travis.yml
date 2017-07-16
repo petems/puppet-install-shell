@@ -39,3 +39,9 @@ matrix:
     env: SUITE=ubuntu-1604-docker
     script:
       - bundle exec rake acceptance:suite_on_nodeset['ubuntu-1604-docker']
+  - rvm: '2.1'
+    sudo: required
+    services: docker
+    env: SUITE=amazon-linux-20172-docker
+    script:
+      - bundle exec rake acceptance:suite_on_nodeset['amazon-linux-20172-docker']

@@ -1,6 +1,7 @@
 require 'spec_helper_acceptance'
 
-describe 'install_puppet.sh with no arguments' do
+# Amazon Linux won't install the 3.X Puppet Agent
+describe 'install_puppet.sh with no arguments', :unless => (os[:family] == 'amazon') do
 
   describe command('bash -c "/var/tmp/puppet-install-shell/install_puppet.sh"') do
     if os[:family] == 'redhat'

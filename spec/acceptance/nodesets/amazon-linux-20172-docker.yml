@@ -1,0 +1,11 @@
+HOSTS:
+  amazon-linux-20172-x64:
+    platform: el-6-x86_64
+    hypervisor : docker
+    image: amazonlinux:2017.03
+    docker_preserve_image: true
+    docker_cmd: '["/sbin/init"]'
+    docker_preserve_image: true
+CONFIG:
+  type: foss
+  log_level: debug
