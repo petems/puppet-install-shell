@@ -120,8 +120,9 @@ elif test -f "/etc/system-release"; then
   platform_version=`sed 's/^.\+ release \([.0-9]\+\).*/\1/' /etc/system-release | tr '[A-Z]' '[a-z]'`
   # amazon is built off of fedora, so act like RHEL
   if test "$platform" = "amazon linux ami"; then
-    platform="el"
-    platform_version="6.0"
+    critical "Amazon Linux can't install older Puppet: Puppet 4 works fine on Amazon Linux"
+    report_bug
+    exit 1
   fi
 # Apple OS X
 elif test -f "/usr/bin/sw_vers"; then
