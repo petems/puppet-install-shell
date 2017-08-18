@@ -183,7 +183,10 @@ else
   info "Matching Puppet version to puppet-agent package version (See http://docs.puppetlabs.com/puppet/latest/reference/about_agent.html for more details)"
   case "$version" in
     5.0.*)
-      puppet_agent_version='5.0.0'
+      puppet_agent_version='5.0.1'
+      ;;
+    5.1.*)
+      puppet_agent_version='5.1.0'
       ;;
     *)
       critical "Unable to match requested puppet version to puppet-agent version - Check http://docs.puppetlabs.com/puppet/latest/reference/about_agent.html"
