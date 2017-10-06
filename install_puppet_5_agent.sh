@@ -179,22 +179,19 @@ if test "x$version" = "x"; then
   version="latest";
   info "Version parameter not defined, assuming latest";
 else
-  info "Version parameter defined: $version";
-  info "Matching Puppet version to puppet-agent package version (See http://docs.puppetlabs.com/puppet/latest/reference/about_agent.html for more details)"
   case "$version" in
-    5.0.*)
-      puppet_agent_version='5.0.1'
-      ;;
-    5.1.*)
-      puppet_agent_version='5.1.0'
-      ;;
-    5.2.*)
-      puppet_agent_version='5.2.0'
-      ;;
-    *)
-      critical "Unable to match requested puppet version to puppet-agent version - Check http://docs.puppetlabs.com/puppet/latest/reference/about_agent.html"
+    3*)
+      critical "Cannot install Puppet 3 with this script. Puppet 3 is EOL, and you should upgrade. you need to use install_puppet_agent.sh"
       report_bug
       exit 1
+      ;;
+    4*)
+      critical "Cannot install Puppet 4 with this script, you need to use install_puppet_agent.sh"
+      report_bug
+      exit 1
+      ;;
+    *)
+      info "Version parameter defined: $version";
       ;;
   esac
 fi
@@ -434,7 +431,7 @@ install_file() {
       if test "$version" = 'latest'; then
         yum install -y puppet-agent
       else
-        yum install -y "puppet-agent-${puppet_agent_version}"
+        yum install -y "puppet-agent-${version}"
       fi
       ;;
     "deb")
@@ -445,9 +442,9 @@ install_file() {
         apt-get install -y puppet-agent
       else
         if test "x$deb_codename" != "x"; then
-          apt-get install -y "puppet-agent=${puppet_agent_version}-1${deb_codename}"
+          apt-get install -y "puppet-agent=${version}-1${deb_codename}"
         else
-          apt-get install -y "puppet-agent=${puppet_agent_version}"
+          apt-get install -y "puppet-agent=${version}"
         fi
       fi
       ;;
