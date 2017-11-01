@@ -635,7 +635,7 @@ case $platform in
     fi
 
     if test "x$no_puppetlab_repo_download" != "x"; then
-      warn 'Skipping download of Puppet repistory, using distro upstream instead'
+      warn 'Skipping download of Puppet repository, using distro upstream instead'
     else
       do_download "$download_url"  "$download_filename"
       install_puppetlabs_repo $filetype "$download_filename"
