@@ -133,7 +133,7 @@ elif test -f "/usr/bin/sw_vers"; then
   major_version=`echo $platform_version | cut -d. -f1,2`
   case $major_version in
     "10.6") platform_version="10.6" ;;
-    "10.7"|"10.8"|"10.9") platform_version="10.7" ;;
+    "10.7"|"10.8"|"10.9"|"10.10") platform_version="10.7" ;;
     *) echo "No builds for platform: $major_version"
        report_bug
        exit 1
@@ -485,6 +485,8 @@ install_puppet_package() {
               sleep 1
               hdiutil unmount /Volumes/puppet-${version}
               flag=$?
+              gem install facter
+              gem install hiera
           done
       ;;
     *)
@@ -603,6 +605,7 @@ case $platform in
         download_url="http://apt.puppetlabs.com/${filename}"
         ;;
       "mac_os_x")
+        no_puppetlab_repo_download='yes'
         info "Mac OS X platform! You need some DMGs..."
         filetype="dmg"
         if test "$version" = ''; then
@@ -640,8 +643,13 @@ case $platform in
       do_download "$download_url"  "$download_filename"
       install_puppetlabs_repo $filetype "$download_filename"
     fi
-
-    install_puppet_package $filetype
+    
+    if [ "$platform" == "mac_os_x" ];then
+        do_download "$download_url"  "$download_filename"
+        install_puppet_package $filetype "$download_filename"
+    else
+        install_puppet_package $filetype
+    fi
     ;;
 esac
 
@@ -649,3 +657,4 @@ esac
 if test "x$tmp_dir" != "x"; then
   rm -r "$tmp_dir"
 fi
+
