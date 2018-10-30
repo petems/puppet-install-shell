@@ -190,6 +190,11 @@ else
       report_bug
       exit 1
       ;;
+    5*)
+      critical "Cannot install Puppet 5 with this script, you need to use install_puppet_5_agent.sh"
+      report_bug
+      exit 1
+      ;;
     *)
       info "Version parameter defined: $version";
       ;;
