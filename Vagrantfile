@@ -74,6 +74,30 @@ Vagrant.configure("2") do |config|
     fedora25_puppet_5_agent.vm.provision "shell", inline: "puppet --version"
   end
 
+  config.vm.define "jessie_puppet_6_agent" do |jessie_puppet_6_agent|
+    jessie_puppet_6_agent.vm.box = "debian/jessie64"
+    jessie_puppet_6_agent.vm.provision "shell", path: "install_puppet_6_agent.sh"
+    jessie_puppet_6_agent.vm.provision "shell", inline: "puppet --version"
+  end
+
+  config.vm.define "xenial_puppet_6_agent" do |xenial_puppet_6_agent|
+    xenial_puppet_6_agent.vm.box = "ubuntu/xenial64"
+    xenial_puppet_6_agent.vm.provision "shell", path: "install_puppet_6_agent.sh"
+    xenial_puppet_6_agent.vm.provision "shell", inline: "puppet --version"
+  end
+
+  config.vm.define "centos7_puppet_6_agent" do |centos7_puppet_6_agent|
+    centos7_puppet_6_agent.vm.box = "centos/7"
+    centos7_puppet_6_agent.vm.provision "shell", path: "install_puppet_6_agent.sh"
+    centos7_puppet_6_agent.vm.provision "shell", inline: "puppet --version"
+  end
+
+  config.vm.define "fedora25_puppet_6_agent" do |fedora25_puppet_6_agent|
+    fedora25_puppet_6_agent.vm.box = "fedora/25-cloud-base"
+    fedora25_puppet_6_agent.vm.provision "shell", path: "install_puppet_6_agent.sh"
+    fedora25_puppet_6_agent.vm.provision "shell", inline: "puppet --version"
+  end
+
   config.vm.define "jessie_non_agent" do |jessie|
     jessie.vm.box = "debian/jessie64"
     jessie.vm.provision "shell", path: "install_puppet.sh", args: "-v 3.7.2-4"
