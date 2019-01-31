@@ -7,7 +7,7 @@ describe 'install_puppet_6_agent.sh with version argument' do
       its(:stdout) { should match /Red hat like platform! Lets get you an RPM.../ }
       its(:stdout) { should match /installing puppetlabs yum repo with rpm.../ }
     end
-    if os[:family] == 'debian'
+    if os[:family] == 'debian' && Gem::Version.new(os[:release]) >= Gem::Version.new('8.0.0')
       its(:stdout) { should match /Debian platform! Lets get you a DEB.../ }
       its(:stdout) { should match /installing puppetlabs apt repo with dpkg.../ }
     end
