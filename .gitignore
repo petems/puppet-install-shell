@@ -1,5 +1,4 @@
 .vagrant/
-Gemfile.lock
 dist/
 junit/
 log/
