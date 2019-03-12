@@ -175,7 +175,6 @@ GEM
     in-parallel (0.1.17)
     inifile (3.0.0)
     ipaddress (0.8.3)
-    jaro_winkler (1.5.2)
     jmespath (1.4.0)
     json (1.8.6)
     jwt (2.1.0)
@@ -210,10 +209,7 @@ GEM
     parallel (1.13.0)
     parallel_tests (2.27.1)
       parallel
-    parser (2.6.0.0)
-      ast (~> 2.4.0)
     pathspec (0.2.1)
-    powerpack (0.1.2)
     pry (0.12.2)
       coderay (~> 1.1.0)
       method_source (~> 0.9.0)
@@ -252,7 +248,6 @@ GEM
       log4r (= 1.1.10)
       multi_json (~> 1.10)
       puppet_forge (~> 2.2.8)
-    rainbow (3.0.0)
     rake (12.3.2)
     rb-readline (0.5.5)
     rbvmomi (1.13.0)
@@ -287,20 +282,9 @@ GEM
       json
     rspec-support (3.8.0)
     rsync (1.0.9)
-    rubocop (0.63.1)
-      jaro_winkler (~> 1.5.1)
-      parallel (~> 1.10)
-      parser (>= 2.5, != 2.5.1.1)
-      powerpack (~> 0.1)
-      rainbow (>= 2.2.2, < 4.0)
-      ruby-progressbar (~> 1.7)
-      unicode-display_width (~> 1.4.0)
-    rubocop-rspec (1.32.0)
-      rubocop (>= 0.60.0)
     ruby-ll (2.1.2)
       ansi
       ast
-    ruby-progressbar (1.10.0)
     semantic_puppet (1.0.2)
     serverspec (2.41.3)
       multi_json
@@ -350,7 +334,6 @@ GEM
     unf (0.1.4)
       unf_ext
     unf_ext (0.0.7.5)
-    unicode-display_width (1.4.1)
 
 PLATFORMS
   ruby
@@ -361,9 +344,8 @@ DEPENDENCIES
   beaker-rspec
   pry
   rb-readline
-  rubocop-rspec (~> 1.6)
   simp-beaker-helpers!
   simp-rake-helpers
 
 BUNDLED WITH
-   1.17.2
+   2.0.1

@@ -1,7 +1,6 @@
 source ENV['GEM_SOURCE'] || "https://rubygems.org"
 
 group :test do
-  gem 'rubocop-rspec', '~> 1.6', :require => false if RUBY_VERSION >= '2.3.0'
   gem 'pry'
   gem 'rb-readline'
 end
