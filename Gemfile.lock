@@ -118,7 +118,7 @@ GEM
       multi_json
     domain_name (0.5.20180417)
       unf (>= 0.0.5, < 1.0.0)
-    excon (0.62.0)
+    excon (0.71.0)
     extlib (0.9.16)
     facter (2.5.1)
     faraday (0.13.1)
