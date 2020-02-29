@@ -248,7 +248,7 @@ GEM
       log4r (= 1.1.10)
       multi_json (~> 1.10)
       puppet_forge (~> 2.2.8)
-    rake (12.3.2)
+    rake (12.3.3)
     rb-readline (0.5.5)
     rbvmomi (1.13.0)
       builder (~> 3.0)
