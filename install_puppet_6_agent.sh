@@ -443,6 +443,7 @@ install_file() {
       info "installing puppetlabs apt repo with dpkg..."
       dpkg -i "$2"
       apt-get update -y
+      apt-get install apt-transport-https ca-certificates -y
       if test "$version" = 'latest'; then
         apt-get install -y puppet-agent
       else
