@@ -1,7 +1,7 @@
 puppet-install-shell
 ====================
 
-[![Build Status](https://travis-ci.org/petems/puppet-install-shell.png)](https://travis-ci.org/petems/puppet-install-shell)
+![Acceptance Tests](https://github.com/petems/puppet-install-shell/actions/workflows/acceptance.yml/badge.svg)
 
 A shell script to install puppet on multiple distros, assuming no dependencies.
 
