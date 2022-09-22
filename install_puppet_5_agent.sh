@@ -500,6 +500,7 @@ case $platform in
           "8") deb_codename="jessie";;
           "9") deb_codename="stretch";;
           "10") deb_codename="buster";;
+          "11") deb_codename="bullseye";;
         esac
         filetype="deb"
         filename="puppet5-release-${deb_codename}.deb"

@@ -501,6 +501,7 @@ case $platform in
         case $major_version in
           "9") deb_codename="stretch";;
           "10") deb_codename="buster";;
+          "11") deb_codename="bullseye";;
         esac
         filetype="deb"
         filename="puppet7-release-${deb_codename}.deb"
