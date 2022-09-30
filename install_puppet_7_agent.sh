@@ -512,6 +512,9 @@ case $platform in
         case $platform_version in
           "18.04") deb_codename="bionic";;
           "20.04") deb_codename="focal";;
+          # "20.10") deb_codename="focal";; ### Skipped
+          "22.04") deb_codename="jammy";;
+          "22.10") deb_codename="kinetic";;
         esac
         filetype="deb"
         filename="puppet7-release-${deb_codename}.deb"

@@ -519,6 +519,7 @@ case $platform in
           "13.04") deb_codename="raring";;
           "13.10") deb_codename="saucy";;
           "14.04") deb_codename="trusty";;
+          "14.10") utopic;;
           "15.04") deb_codename="vivid";;
           "15.10") deb_codename="wily";;
           "16.04") deb_codename="xenial";;
@@ -526,7 +527,9 @@ case $platform in
           "17.04") deb_codename="zesty";;
           "18.04") deb_codename="bionic";;
           "20.04") deb_codename="focal";;
-          "14.10") utopic;;
+          # "20.10") deb_codename="focal";; ### Skipped
+          "22.04") deb_codename="jammy";;
+          "22.10") deb_codename="kinetic";;
         esac
         filetype="deb"
         filename="puppet6-release-${deb_codename}.deb"
