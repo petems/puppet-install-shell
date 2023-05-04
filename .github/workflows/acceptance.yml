@@ -1,17 +1,19 @@
 on: [push, pull_request]
 name: acceptance tests
 jobs:
-  Linux:
+  linux:
     strategy:
       matrix:
         os: ["ubuntu:latest", "debian:latest", "fedora:latest", "centos:7"]
     runs-on: ubuntu-latest
+    container:
+      image: ${{ matrix.os }}
     steps:
     - name: Checkout code
       uses: actions/checkout@v2
     - name: Run install script 
       run: |  
-        sudo bash ./install_puppet_7_agent.sh
+        bash ./install_puppet_7_agent.sh
     - name: Test puppet is installed
       run: |
         /opt/puppetlabs/bin/puppet --version
