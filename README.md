@@ -33,6 +33,12 @@ Puppet > 7.X
 $ wget -O - https://raw.githubusercontent.com/petems/puppet-install-shell/master/install_puppet_7_agent.sh | sudo sh
 ```
 
+
+Puppet > 8.X
+```
+$ wget -O - https://raw.githubusercontent.com/petems/puppet-install-shell/master/install_puppet_8_agent.sh | sudo sh
+```
+
 ## Running Acceptance Tests
 
 Pick an Operating System then run the rake helper:
