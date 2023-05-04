@@ -11,7 +11,7 @@ jobs:
       uses: actions/checkout@v2
     - name: Run install script 
       run: |  
-        sudo bash ./install_puppet_7_agent.sh
+        sudo bash ./install_puppet_8_agent.sh
     - name: Test puppet is installed
       run: |
         /opt/puppetlabs/bin/puppet --version
